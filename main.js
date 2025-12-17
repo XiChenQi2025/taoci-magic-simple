@@ -1,6 +1,6 @@
 // ==========================================
 // 桃汽水的魔力补给站 - 主骨架逻辑
-// 负责：路由管理、模块加载、事件处理
+// 简化版本：直接集成首页模块，支持后续模块扩展
 // ==========================================
 
 class TaociFramework {
@@ -11,19 +11,20 @@ class TaociFramework {
         this.navList = document.getElementById('nav-list');
         this.notificationArea = document.getElementById('notification-area');
         
-        // 默认模块配置（后续可通过配置文件扩展）
+        // 默认模块配置（首页内置，其他模块按需加载）
         this.defaultModules = [
             {
                 id: 'home',
                 name: '首页',
                 icon: 'fas fa-home',
-                enabled: true
+                enabled: true,
+                builtIn: true // 内置模块
             },
             {
                 id: 'game-bubble',
                 name: '魔力泡泡',
                 icon: 'fas fa-gamepad',
-                enabled: false  // 默认不启用，需要时加载
+                enabled: false
             },
             {
                 id: 'answer-book',
@@ -59,19 +60,19 @@ class TaociFramework {
         this.initRouter();
         
         // 3. 加载初始模块（首页）
-        this.loadModule('home');
+        this.activateModule('home');
         
-        // 4. 绑定全局事件
-        this.bindEvents();
+        // 4. 显示欢迎通知
+        this.showNotification('欢迎来到桃汽水的魔力补给站！', 'success');
         
-        // 5. 显示欢迎通知
-        this.showNotification('欢迎来到桃汽水的魔力补给站！', 'info');
+        // 5. 暴露全局API
+        this.exposeAPI();
     }
     
     // 初始化导航栏
     initNavigation() {
         this.defaultModules.forEach(module => {
-            if (module.enabled) {
+            if (module.enabled || module.builtIn) {
                 this.addNavItem(module);
             }
         });
@@ -114,6 +115,8 @@ class TaociFramework {
         // 防止重复加载
         if (this.currentModule === moduleId) return;
         
+        console.log(`🔄 切换模块: ${moduleId}`);
+        
         // 更新导航激活状态
         this.updateNavActive(moduleId);
         
@@ -131,44 +134,235 @@ class TaociFramework {
             window.history.pushState(null, null, `#${moduleId}`);
             
         } catch (error) {
-            console.error(`加载模块 ${moduleId} 失败:`, error);
-            this.showNotification(`加载模块失败: ${error.message}`, 'error');
-            this.showErrorState();
+            console.error(`❌ 加载模块 ${moduleId} 失败:`, error);
+            this.showNotification(`加载模块失败: ${moduleId}`, 'error');
+            this.showErrorState(moduleId);
         }
     }
     
     // 加载模块内容
     async loadModule(moduleId) {
-        // 如果是首页，使用内置欢迎页面
+        // 如果是首页，使用内置内容
         if (moduleId === 'home') {
-            this.renderHomePage();
+            this.loadHomeModule();
             return;
         }
         
         // 检查模块是否已注册
-        if (!this.modules.has(moduleId)) {
-            // 动态加载模块文件
-            await this.loadModuleFiles(moduleId);
+        if (this.modules.has(moduleId)) {
+            const module = this.modules.get(moduleId);
+            this.moduleContainer.innerHTML = module.content || '<p>模块内容</p>';
+            
+            // 执行模块初始化函数（如果存在）
+            if (module.onLoad) {
+                setTimeout(() => module.onLoad(), 100);
+            }
+            return;
         }
         
-        // 获取模块配置
-        const module = this.modules.get(moduleId);
-        
-        // 渲染模块内容
-        this.moduleContainer.innerHTML = `
-            <div class="module-header">
-                <h2><i class="${module.icon}"></i> ${module.name}</h2>
-                <p>${module.description || ''}</p>
-            </div>
-            <div class="module-content">
-                ${module.content || '<p>模块内容加载中...</p>'}
-            </div>
+        // 动态加载模块文件
+        await this.loadModuleFiles(moduleId);
+    }
+    
+    // 加载首页模块（内置）
+    loadHomeModule() {
+        // 首页HTML内容
+        const homeHTML = `
+            <section class="home-module">
+                <!-- 角色展示区域 -->
+                <div class="character-container">
+                    <div class="character-display" id="character-display">
+                        <div class="loading-placeholder">
+                            <div class="loading-emoji">🍑</div>
+                            <p>加载中...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 3D立体阴影 -->
+                    <div class="character-shadow" id="character-shadow"></div>
+                    
+                    <!-- 漂浮粒子效果 -->
+                    <div class="particles-container" id="particles-container"></div>
+                </div>
+                
+                <!-- 欢迎卡片 -->
+                <div class="greeting-card">
+                    <h2 class="greeting-title" id="greeting-title">欢迎来到我的魔力补给站！</h2>
+                    <p class="greeting-text" id="greeting-text">我是来自异世界的精灵公主桃汽水~ 周年庆活动马上就要开始啦，快来一起收集魔力，参加有趣的游戏吧！</p>
+                    
+                    <!-- 随机图片指示器 -->
+                    <div class="random-indicator">
+                        <span class="indicator-label">当前展示：</span>
+                        <span class="indicator-value" id="current-image-index">加载中...</span>
+                        <span class="indicator-hint">（每次刷新随机展示）</span>
+                    </div>
+                </div>
+                
+                <!-- 操作提示 -->
+                <div class="action-hint">
+                    <div class="hint-item">
+                        <div class="hint-icon">🎮</div>
+                        <p>点击左侧导航开始探索功能</p>
+                    </div>
+                    <div class="hint-item">
+                        <div class="hint-icon">✨</div>
+                        <p>将鼠标移到图片上查看3D效果</p>
+                    </div>
+                </div>
+            </section>
         `;
         
-        // 执行模块初始化函数（如果存在）
-        if (module.onLoad) {
-            setTimeout(() => module.onLoad(), 100);
+        // 设置内容
+        this.moduleContainer.innerHTML = homeHTML;
+        
+        // 加载首页逻辑
+        this.loadHomeLogic();
+    }
+    
+    // 加载首页逻辑
+    async loadHomeLogic() {
+        // 等待DOM渲染完成
+        setTimeout(() => {
+            // 配置
+            const config = {
+                images: {
+                    count: 3,
+                    folder: './assets/images/character/',
+                    files: ['taoci-avatar-1.png', 'taoci-avatar-2.png', 'taoci-avatar-3.png'],
+                    fallbackEmoji: '🍑',
+                    altText: '桃汽水 - 异世界精灵公主'
+                },
+                features: {
+                    enable3DEffect: true,
+                    enableParticles: true,
+                    enableShadow: true,
+                    enableHoverEffect: true
+                }
+            };
+            
+            // 随机选择图片
+            const randomIndex = Math.floor(Math.random() * config.images.count);
+            const imageUrl = `${config.images.folder}${config.images.files[randomIndex]}`;
+            
+            // 获取元素
+            const display = document.getElementById('character-display');
+            const indicator = document.getElementById('current-image-index');
+            const shadow = document.getElementById('character-shadow');
+            const particlesContainer = document.getElementById('particles-container');
+            
+            if (display && indicator) {
+                // 创建图片元素
+                const img = document.createElement('img');
+                img.className = 'character-image';
+                img.src = imageUrl;
+                img.alt = config.images.altText;
+                
+                // 图片加载成功
+                img.onload = () => {
+                    console.log(`✅ 图片加载成功: ${imageUrl}`);
+                    
+                    // 移除加载占位符
+                    const placeholder = display.querySelector('.loading-placeholder');
+                    if (placeholder) {
+                        placeholder.style.display = 'none';
+                    }
+                    
+                    // 添加到显示区域
+                    display.appendChild(img);
+                    
+                    // 更新指示器
+                    indicator.textContent = `图片 ${randomIndex + 1} / ${config.images.count}`;
+                    
+                    // 初始化功能
+                    this.initHomeFeatures(config, img, shadow, particlesContainer);
+                };
+                
+                // 图片加载失败
+                img.onerror = () => {
+                    console.warn(`❌ 图片加载失败: ${imageUrl}, 使用Emoji回退`);
+                    
+                    // 显示Emoji回退
+                    display.innerHTML = `
+                        <div class="emoji-fallback">
+                            <div class="fallback-emoji">${config.images.fallbackEmoji}</div>
+                            <p class="fallback-text">图片加载失败，请检查文件路径</p>
+                        </div>
+                    `;
+                    
+                    indicator.textContent = '加载失败';
+                };
+            }
+            
+        }, 100);
+    }
+    
+    // 初始化首页功能
+    initHomeFeatures(config, img, shadow, particlesContainer) {
+        // 控制阴影显示
+        if (shadow) {
+            shadow.style.display = config.features.enableShadow ? 'block' : 'none';
         }
+        
+        // 控制粒子效果
+        if (particlesContainer) {
+            if (config.features.enableParticles) {
+                this.createParticles(particlesContainer);
+            } else {
+                particlesContainer.style.display = 'none';
+            }
+        }
+        
+        // 控制悬停效果
+        if (img && !config.features.enableHoverEffect) {
+            img.style.pointerEvents = 'none';
+        }
+    }
+    
+    // 创建粒子效果
+    createParticles(container) {
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        // 创建5个粒子
+        for (let i = 0; i < 5; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            // 随机属性
+            const size = Math.random() * 6 + 2;
+            const color = this.getRandomColor();
+            const left = Math.random() * 80 + 10;
+            const top = Math.random() * 80 + 10;
+            const delay = Math.random() * 10;
+            const duration = Math.random() * 10 + 15;
+            
+            particle.style.cssText = `
+                width: ${size}px;
+                height: ${size}px;
+                background: ${color};
+                top: ${top}%;
+                left: ${left}%;
+                animation: float-particle ${duration}s linear ${delay}s infinite;
+            `;
+            
+            container.appendChild(particle);
+        }
+    }
+    
+    // 获取随机颜色
+    getRandomColor() {
+        const colors = [
+            'rgba(255, 0, 255, 0.8)',    // 荧光粉
+            'rgba(255, 102, 204, 0.8)',  // 热粉
+            'rgba(51, 255, 153, 0.8)',   // 霓虹绿
+            'rgba(255, 255, 51, 0.8)',   // 霓虹黄
+            'rgba(204, 102, 255, 0.8)',  // 霓虹紫
+            'rgba(51, 153, 255, 0.8)',   // 霓虹蓝
+            'rgba(255, 153, 102, 0.8)'   // 霓虹橙
+        ];
+        
+        return colors[Math.floor(Math.random() * colors.length)];
     }
     
     // 动态加载模块文件
@@ -196,8 +390,14 @@ class TaociFramework {
                 id: moduleId,
                 name: this.getModuleName(moduleId),
                 icon: this.getModuleIcon(moduleId),
-                content: html
+                content: html,
+                onLoad: () => {
+                    console.log(`✅ 模块 ${moduleId} 加载完成`);
+                }
             });
+            
+            // 显示模块内容
+            this.moduleContainer.innerHTML = html;
             
             console.log(`✅ 模块 ${moduleId} 加载成功`);
             
@@ -205,93 +405,6 @@ class TaociFramework {
             console.error(`❌ 加载模块文件失败: ${moduleId}`, error);
             throw error;
         }
-    }
-    
-    // 渲染首页（内置）
-    renderHomePage() {
-        this.moduleContainer.innerHTML = `
-            <div class="home-page">
-                <div class="hero-section">
-                    <h1 class="hero-title">欢迎回来，契约者！</h1>
-                    <p class="hero-subtitle">异世界精灵公主桃汽水的周年庆典正在进行中</p>
-                    
-                    <div class="hero-character">
-                        <div class="character-display">
-                            <div class="character-emoji-large">👸✨🍑</div>
-                            <div class="character-quote">
-                                "收集魔力，一起庆祝吧！"
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="quick-actions">
-                    <h2>✨ 快速开始</h2>
-                    <div class="action-grid" id="quick-action-grid">
-                        <!-- 快速操作按钮由JS动态生成 -->
-                    </div>
-                </div>
-                
-                <div class="module-intro">
-                    <h2>🎮 功能模块介绍</h2>
-                    <div class="intro-cards">
-                        <div class="intro-card">
-                            <div class="intro-icon">🎮</div>
-                            <h3>魔力泡泡</h3>
-                            <p>点击泡泡收集魔力，小心调皮泡泡捣乱！</p>
-                        </div>
-                        <div class="intro-card">
-                            <div class="intro-icon">📚</div>
-                            <h3>答案之书</h3>
-                            <p>向精灵公主提问，获取神秘答案</p>
-                        </div>
-                        <div class="intro-card">
-                            <div class="intro-icon">🎁</div>
-                            <h3>B站抽奖复刻</h3>
-                            <p>复刻B站经典抽奖玩法，赢取虚拟奖励</p>
-                        </div>
-                        <div class="intro-card">
-                            <div class="intro-icon">💬</div>
-                            <h3>留言板</h3>
-                            <p>给桃汽水公主留言，表达你的祝福</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        // 添加快速操作按钮
-        this.renderQuickActions();
-    }
-    
-    // 渲染快速操作
-    renderQuickActions() {
-        const grid = document.getElementById('quick-action-grid');
-        if (!grid) return;
-        
-        const actions = [
-            { id: 'game-bubble', icon: '🎮', label: '玩泡泡游戏', color: 'var(--neon-green)' },
-            { id: 'answer-book', icon: '📚', label: '查看答案之书', color: 'var(--neon-purple)' },
-            { id: 'lottery-bilibili', icon: '🎁', label: '参与抽奖', color: 'var(--neon-orange)' },
-            { id: 'message-board', icon: '💬', label: '写留言', color: 'var(--neon-blue)' }
-        ];
-        
-        grid.innerHTML = actions.map(action => `
-            <button class="quick-action-btn" 
-                    data-module="${action.id}"
-                    style="--btn-color: ${action.color}">
-                <span class="action-icon">${action.icon}</span>
-                <span class="action-label">${action.label}</span>
-            </button>
-        `).join('');
-        
-        // 绑定按钮事件
-        grid.querySelectorAll('.quick-action-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const moduleId = btn.dataset.module;
-                this.activateModule(moduleId);
-            });
-        });
     }
     
     // 更新导航激活状态
@@ -313,26 +426,24 @@ class TaociFramework {
         this.moduleContainer.innerHTML = `
             <div class="module-loading">
                 <div class="loading-spinner"></div>
-                <p>正在加载模块...</p>
+                <p>正在加载...</p>
             </div>
         `;
     }
     
     // 显示错误状态
-    showErrorState() {
+    showErrorState(moduleId) {
         this.moduleContainer.innerHTML = `
             <div class="error-state">
                 <div class="error-icon">❌</div>
                 <h3>模块加载失败</h3>
-                <p>请检查网络连接或稍后重试</p>
-                <button id="retry-load" class="retry-btn">重试加载</button>
+                <p>无法加载模块: ${this.getModuleName(moduleId)}</p>
+                <p>请检查模块文件是否存在</p>
+                <button onclick="window.TaociApp.activateModule('home')" class="retry-btn">
+                    <i class="fas fa-home"></i> 返回首页
+                </button>
             </div>
         `;
-        
-        // 绑定重试按钮
-        document.getElementById('retry-load')?.addEventListener('click', () => {
-            this.activateModule(this.currentModule);
-        });
     }
     
     // 获取模块名称
@@ -361,6 +472,8 @@ class TaociFramework {
     
     // 显示通知
     showNotification(message, type = 'info') {
+        if (!this.notificationArea) return;
+        
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
         notification.innerHTML = `
@@ -391,20 +504,18 @@ class TaociFramework {
         return icons[type] || 'info-circle';
     }
     
-    // 绑定全局事件
-    bindEvents() {
-        // 监听模块注册事件
-        window.addEventListener('taoci-module-register', (e) => {
-            this.registerModule(e.detail);
-        });
+    // 暴露全局API
+    exposeAPI() {
+        window.TaociApp = this;
         
-        // 监听模块加载请求
-        window.addEventListener('taoci-load-module', (e) => {
-            this.activateModule(e.detail.moduleId);
-        });
+        window.Taoci = {
+            loadModule: (moduleId) => this.activateModule(moduleId),
+            showNotification: (msg, type) => this.showNotification(msg, type),
+            registerModule: (config) => this.registerModule(config)
+        };
     }
     
-    // 注册模块（供外部调用）
+    // 注册模块（供外部模块调用）
     registerModule(moduleConfig) {
         const { id, name, icon, content, onLoad } = moduleConfig;
         
@@ -416,16 +527,6 @@ class TaociFramework {
             onLoad
         });
         
-        // 添加到导航（如果尚未添加）
-        if (!document.querySelector(`.nav-link[data-module="${id}"]`)) {
-            this.addNavItem({
-                id,
-                name: name || this.getModuleName(id),
-                icon: icon || this.getModuleIcon(id),
-                enabled: true
-            });
-        }
-        
         console.log(`✅ 模块 ${id} 已注册`);
     }
 }
@@ -436,25 +537,23 @@ class TaociFramework {
 
 // 页面加载完成后启动框架
 window.addEventListener('DOMContentLoaded', () => {
-    window.TaociApp = new TaociFramework();
-    
-    // 暴露全局API
-    window.Taoci = {
-        loadModule: (moduleId) => window.TaociApp.activateModule(moduleId),
-        showNotification: (msg, type) => window.TaociApp.showNotification(msg, type),
-        registerModule: (config) => window.TaociApp.registerModule(config)
-    };
+    // 创建框架实例
+    const app = new TaociFramework();
     
     console.log('🍑 桃汽水的魔力补给站 已启动！');
 });
 
 // ==========================================
-// 全局样式（添加到home页面）
+// 添加首页模块样式
 // ==========================================
 
-const homeStyles = `
-.home-page {
-    animation: fadeIn 0.5s ease-out;
+const homeModuleStyles = `
+/* 首页模块样式 */
+.home-module {
+    animation: fadeIn 0.8s ease-out;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 @keyframes fadeIn {
@@ -462,152 +561,317 @@ const homeStyles = `
     to { opacity: 1; transform: translateY(0); }
 }
 
-.hero-section {
-    text-align: center;
-    padding: 40px 20px;
-    background: linear-gradient(135deg, 
-        rgba(255, 0, 255, 0.05), 
-        rgba(255, 102, 204, 0.05));
-    border-radius: var(--border-radius);
-    margin-bottom: 40px;
-}
-
-.hero-title {
-    color: var(--flamingo-pink);
-    font-size: 36px;
-    margin-bottom: 10px;
-    text-shadow: var(--glow-effect);
-}
-
-.hero-subtitle {
-    color: var(--text-secondary);
-    font-size: 18px;
-    margin-bottom: 30px;
-}
-
-.character-display {
-    display: inline-flex;
-    flex-direction: column;
+/* 角色展示容器 */
+.character-container {
+    position: relative;
+    width: 100%;
+    max-width: 810px;
+    height: 810px;
+    margin: 0 auto 40px;
+    display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-light);
-    border: 2px dashed var(--hot-pink);
+    justify-content: center;
+    overflow: visible;
+    pointer-events: none;
 }
 
-.character-emoji-large {
-    font-size: 60px;
-    animation: bounce 2s ease-in-out infinite;
+/* 角色显示区域 */
+.character-display {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
 }
 
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+/* 图片样式 */
+.character-image {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    position: relative;
+    z-index: 100;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: auto;
+    border-radius: 20px;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1), 
+        rgba(255, 255, 255, 0.05));
+    box-shadow: 
+        0 15px 35px rgba(255, 0, 255, 0.2),
+        0 0 40px rgba(255, 102, 204, 0.4),
+        0 0 60px rgba(255, 102, 204, 0.3);
+    animation: float-3d 8s ease-in-out infinite;
 }
 
-.character-quote {
-    font-style: italic;
-    color: var(--flamingo-pink);
-    font-size: 18px;
-    padding: 10px 20px;
-    background: white;
-    border-radius: 30px;
-    box-shadow: var(--shadow-light);
+/* 3D浮动动画 */
+@keyframes float-3d {
+    0%, 100% { 
+        transform: 
+            translateZ(0px) 
+            rotateX(0deg) 
+            rotateY(0deg)
+            scale(1); 
+    }
+    20% { 
+        transform: 
+            translateZ(20px) 
+            rotateX(1deg) 
+            rotateY(2deg)
+            scale(1.02); 
+    }
+    40% { 
+        transform: 
+            translateZ(10px) 
+            rotateX(-1deg) 
+            rotateY(-1deg)
+            scale(1.01); 
+    }
+    60% { 
+        transform: 
+            translateZ(15px) 
+            rotateX(1.5deg) 
+            rotateY(-2deg)
+            scale(1.015); 
+    }
+    80% { 
+        transform: 
+            translateZ(5px) 
+            rotateX(-0.5deg) 
+            rotateY(1.5deg)
+            scale(1.005); 
+    }
 }
 
-.quick-actions {
-    margin-bottom: 40px;
+/* 悬停效果 */
+.character-container:hover .character-image {
+    transform: 
+        translateZ(30px) 
+        rotateX(5deg) 
+        rotateY(5deg)
+        scale(1.05);
+    box-shadow: 
+        0 20px 45px rgba(255, 0, 255, 0.3),
+        0 0 50px rgba(255, 102, 204, 0.6),
+        0 0 70px rgba(255, 102, 204, 0.5);
+    animation-play-state: paused;
 }
 
-.quick-actions h2 {
-    color: var(--neon-purple);
-    margin-bottom: 20px;
-    text-align: center;
+/* 3D立体阴影 */
+.character-shadow {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%) rotateX(80deg);
+    width: 700px;
+    height: 100px;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(0, 0, 0, 0.4) 0%,
+        rgba(0, 0, 0, 0.3) 20%,
+        rgba(0, 0, 0, 0.2) 40%,
+        rgba(0, 0, 0, 0.1) 60%,
+        transparent 80%
+    );
+    border-radius: 50%;
+    filter: blur(20px);
+    z-index: 10;
+    opacity: 0.7;
+    pointer-events: none;
+    animation: shadow-pulse 8s ease-in-out infinite;
 }
 
-.action-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+@keyframes shadow-pulse {
+    0%, 100% { 
+        opacity: 0.7;
+        transform: translateX(-50%) rotateX(80deg) scale(1);
+        filter: blur(20px);
+    }
+    50% { 
+        opacity: 0.9;
+        transform: translateX(-50%) rotateX(80deg) scale(1.1);
+        filter: blur(25px);
+    }
 }
 
-.quick-action-btn {
-    background: white;
-    border: none;
-    border-radius: var(--border-radius);
-    padding: 20px;
+/* 加载占位符 */
+.loading-placeholder {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    transition: all var(--transition-speed);
-    border: 2px solid var(--btn-color, var(--hot-pink));
-    box-shadow: var(--shadow-light);
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--text-secondary);
 }
 
-.quick-action-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-medium);
-    border-color: var(--flamingo-pink);
+.loading-emoji {
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: spin 2s linear infinite;
 }
 
-.action-icon {
-    font-size: 32px;
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-.action-label {
-    font-weight: 500;
-    color: var(--text-primary);
+/* Emoji回退 */
+.emoji-fallback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
 }
 
-.module-intro h2 {
-    color: var(--neon-green);
-    margin-bottom: 30px;
+.fallback-emoji {
+    font-size: 120px;
+    margin-bottom: 20px;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+.fallback-text {
+    color: var(--text-secondary);
+    font-size: 16px;
     text-align: center;
 }
 
-.intro-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
 }
 
-.intro-card {
-    background: white;
-    padding: 25px;
+/* 欢迎卡片 */
+.greeting-card {
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    box-shadow: var(--shadow-light);
+    margin: 40px auto;
+    max-width: 800px;
+    text-align: center;
+    border: 2px solid rgba(255, 102, 204, 0.3);
+}
+
+.greeting-title {
+    color: var(--flamingo-pink);
+    font-size: 28px;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(255, 102, 204, 0.2);
+}
+
+.greeting-text {
+    color: var(--text-secondary);
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* 随机指示器 */
+.random-indicator {
+    background: rgba(255, 102, 204, 0.1);
+    padding: 12px 20px;
+    border-radius: 30px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 102, 204, 0.2);
+}
+
+.indicator-label {
+    font-weight: 500;
+    color: var(--flamingo-pink);
+}
+
+.indicator-value {
+    background: var(--flamingo-pink);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+}
+
+.indicator-hint {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* 操作提示 */
+.action-hint {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.hint-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 25px;
+    background: rgba(255, 255, 255, 0.8);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-light);
-    text-align: center;
-    border-top: 4px solid var(--hot-pink);
     transition: all var(--transition-speed);
 }
 
-.intro-card:hover {
-    transform: translateY(-5px);
+.hint-item:hover {
+    transform: translateY(-3px);
     box-shadow: var(--shadow-medium);
 }
 
-.intro-icon {
-    font-size: 40px;
-    margin-bottom: 15px;
+.hint-icon {
+    font-size: 24px;
 }
 
-.intro-card h3 {
-    color: var(--flamingo-pink);
-    margin-bottom: 10px;
-}
-
-.intro-card p {
+.hint-item p {
+    margin: 0;
     color: var(--text-secondary);
     font-size: 14px;
 }
 
+/* 粒子效果 */
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0;
+}
+
+/* 粒子动画 */
+@keyframes float-particle {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(100px, -100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* 错误状态 */
 .error-state {
     text-align: center;
     padding: 60px 20px;
+    animation: fadeIn 0.5s ease-out;
 }
 
 .error-icon {
@@ -624,6 +888,7 @@ const homeStyles = `
 .error-state p {
     color: var(--text-secondary);
     margin-bottom: 20px;
+    line-height: 1.6;
 }
 
 .retry-btn {
@@ -635,39 +900,115 @@ const homeStyles = `
     cursor: pointer;
     font-weight: 500;
     transition: all var(--transition-speed);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .retry-btn:hover {
     background: var(--flamingo-pink);
     box-shadow: var(--glow-effect);
+    transform: translateY(-2px);
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+    .character-container {
+        max-width: 700px;
+        height: 700px;
+    }
+    
+    .character-shadow {
+        width: 600px;
+        bottom: -50px;
+    }
+}
+
+@media (max-width: 992px) {
+    .character-container {
+        max-width: 600px;
+        height: 600px;
+    }
+    
+    .character-shadow {
+        width: 500px;
+        bottom: -40px;
+    }
 }
 
 @media (max-width: 768px) {
-    .hero-title {
-        font-size: 28px;
+    .character-container {
+        max-width: 500px;
+        height: 500px;
     }
     
-    .character-emoji-large {
-        font-size: 40px;
+    .character-shadow {
+        width: 400px;
+        bottom: -30px;
+        height: 80px;
     }
     
-    .action-grid {
-        grid-template-columns: 1fr 1fr;
+    .greeting-card {
+        padding: 20px;
     }
     
-    .intro-cards {
-        grid-template-columns: 1fr;
+    .greeting-title {
+        font-size: 24px;
+    }
+    
+    .greeting-text {
+        font-size: 16px;
+    }
+    
+    .action-hint {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    
+    .hint-item {
+        width: 100%;
+        max-width: 300px;
     }
 }
 
-@media (max-width: 480px) {
-    .action-grid {
-        grid-template-columns: 1fr;
+@media (max-width: 576px) {
+    .character-container {
+        max-width: 350px;
+        height: 350px;
+    }
+    
+    .character-shadow {
+        width: 300px;
+        bottom: -20px;
+        height: 60px;
+    }
+    
+    .greeting-title {
+        font-size: 22px;
+    }
+    
+    .greeting-text {
+        font-size: 15px;
+    }
+    
+    .random-indicator {
+        flex-direction: column;
+        gap: 8px;
+        padding: 15px;
+    }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+    .character-container:hover .character-image {
+        transform: none;
+        animation-play-state: running;
     }
 }
 `;
 
-// 注入home页样式
+// 注入首页样式
 const styleElement = document.createElement('style');
-styleElement.textContent = homeStyles;
+styleElement.textContent = homeModuleStyles;
 document.head.appendChild(styleElement);
