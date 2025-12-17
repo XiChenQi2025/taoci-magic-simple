@@ -3,107 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🍑 桃汽水的魔力补给站 | 精灵公主周年庆</title>
-    <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+    <title>🍑 桃汽水的魔力补给站</title>
+    
+    <!-- 主骨架样式 -->
+    <link rel="stylesheet" href="main.css">
+    
+    <!-- 字体图标（可选） -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- 动态模块样式将通过main.js加载 -->
 </head>
 <body>
-    <!-- 加载动画 -->
-    <div id="loading" class="loading">
-        <div class="loading-content">
-            <div class="loading-icon">🍑</div>
-            <div class="loading-text">魔力加载中...</div>
-        </div>
-    </div>
-
-    <!-- 主应用容器 -->
-    <div id="app" class="app">
-        <!-- 顶部导航栏 -->
-        <header class="header">
-            <div class="header-container">
-                <!-- Logo区域 -->
-                <div class="logo" id="logo">
-                    <span class="logo-icon">🍑</span>
-                    <h1 class="logo-text">桃汽水的魔力补给站</h1>
-                    <span class="live-badge" id="live-badge">预热中</span>
+    <!-- 应用容器 -->
+    <div id="app" class="app-container">
+        <!-- 头部区域 -->
+        <header class="main-header">
+            <div class="header-wrapper">
+                <!-- Logo -->
+                <div class="logo-area">
+                    <div class="logo-emoji">🍑</div>
+                    <div class="logo-text">
+                        <h1 class="site-title">桃汽水的魔力补给站</h1>
+                        <p class="site-subtitle">异世界精灵公主的周年庆典</p>
+                    </div>
                 </div>
                 
-                <!-- 导航菜单 -->
-                <nav class="nav" id="nav">
-                    <ul class="nav-list">
-                        <li><a href="#home" class="nav-link active" data-page="home">
-                            <i class="fas fa-home"></i> <span>首页</span>
-                        </a></li>
-                        <li><a href="#games" class="nav-link" data-page="games">
-                            <i class="fas fa-gamepad"></i> <span>小游戏</span>
-                        </a></li>
-                        <li><a href="#answers" class="nav-link" data-page="answers">
-                            <i class="fas fa-book"></i> <span>答案之书</span>
-                        </a></li>
-                        <li><a href="#lottery" class="nav-link" data-page="lottery">
-                            <i class="fas fa-gift"></i> <span>B站抽奖</span>
-                        </a></li>
-                        <li><a href="#messages" class="nav-link" data-page="messages">
-                            <i class="fas fa-comments"></i> <span>留言板</span>
-                        </a></li>
-                    </ul>
-                </nav>
-                
-                <!-- 移动端菜单按钮 -->
-                <button class="menu-toggle" id="menu-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <!-- 角色形象（占位，后续可替换为皮套） -->
+                <div class="character-preview">
+                    <div class="character-placeholder">
+                        <div class="character-emoji">👸✨</div>
+                        <span>桃汽水</span>
+                    </div>
+                </div>
             </div>
         </header>
-
-        <!-- 主内容区域 -->
-        <main class="main" id="main-content">
-            <!-- 页面内容将动态加载到这里 -->
-            <div class="page" id="page-home">
-                <!-- 首页内容将由JS动态生成 -->
+        
+        <!-- 导航区域 -->
+        <nav class="main-nav">
+            <ul class="nav-list" id="nav-list">
+                <!-- 导航项由JS动态生成 -->
+                <!-- 格式：<li><a href="#模块名" class="nav-link"><i class="图标"></i> 模块名</a></li> -->
+            </ul>
+        </nav>
+        
+        <!-- 主内容区 -->
+        <main class="content-area">
+            <!-- 模块加载容器 -->
+            <div id="module-container" class="module-container">
+                <!-- 这里将动态加载模块内容 -->
+                <div class="welcome-message">
+                    <h2>欢迎来到桃汽水的魔力补给站！</h2>
+                    <p>选择左侧的功能模块开始探索吧~</p>
+                    <div class="emoji-display">✨🍑🎮📚🎁💬</div>
+                </div>
             </div>
-            
-            <!-- 其他页面容器（初始隐藏） -->
-            <div class="page hidden" id="page-games"></div>
-            <div class="page hidden" id="page-answers"></div>
-            <div class="page hidden" id="page-lottery"></div>
-            <div class="page hidden" id="page-messages"></div>
         </main>
-
-        <!-- 全局底部 -->
-        <footer class="footer">
-            <div class="footer-container">
-                <div class="footer-section">
-                    <h3>🍑 关于桃汽水</h3>
-                    <p>异世界的精灵公主，活泼可爱又调皮</p>
-                    <p>最爱喝汽水和收集快乐能量</p>
-                </div>
-                
-                <div class="footer-section">
-                    <h3>📢 周年庆活动</h3>
-                    <p>直播时间：<span id="live-time">2024年X月X日 19:00</span></p>
-                    <p>B站直播间：<a href="#" class="footer-link">桃汽水Official</a></p>
-                </div>
-                
-                <div class="footer-section">
-                    <h3>💝 特别感谢</h3>
-                    <p>感谢所有契约者的支持！</p>
-                    <p>本网站为粉丝向作品，非商用</p>
-                </div>
-                
-                <div class="footer-copyright">
-                    <p>© 2024 桃汽水的魔力补给站 | 精灵公主周年庆专属站点</p>
-                    <p class="footer-note">Made with 💖 by 开发组</p>
-                </div>
+        
+        <!-- 页脚 -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <p>© 2024 桃汽水的魔力补给站 | 异世界精灵公主周年庆专属站点</p>
+                <p>仅用于粉丝交流，非商业化使用</p>
             </div>
         </footer>
+        
+        <!-- 全局通知容器 -->
+        <div id="notification-area" class="notification-area"></div>
     </div>
-
-    <!-- 全局脚本 -->
-    <script src="scripts/config.js"></script>
-    <script src="scripts/utils.js"></script>
-    <script src="scripts/router.js"></script>
-    <script src="scripts/app.js"></script>
+    
+    <!-- 主骨架脚本 -->
+    <script src="main.js"></script>
+    
+    <!-- 模块脚本将通过main.js动态加载 -->
 </body>
 </html>
