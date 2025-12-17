@@ -1,0 +1,23 @@
+{
+  "images": {
+    "count": 3,
+    "folder": "./assets/images/character/",
+    "files": [
+      "taoci-avatar-1.png",
+      "taoci-avatar-2.png",
+      "taoci-avatar-3.png"
+    ],
+    "fallbackEmoji": "🍑",
+    "altText": "桃汽水 - 异世界精灵公主"
+  },
+  "greeting": {
+    "title": "欢迎来到我的魔力补给站！",
+    "message": "我是来自异世界的精灵公主桃汽水~ 周年庆活动马上就要开始啦，快来一起收集魔力，参加有趣的游戏吧！"
+  },
+  "features": {
+    "enable3DEffect": true,
+    "enableParticles": true,
+    "enableShadow": true,
+    "enableHoverEffect": true
+  }
+}

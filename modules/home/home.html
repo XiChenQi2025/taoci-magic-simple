@@ -1,1 +1,43 @@
-
+<section class="home-module">
+  <!-- 角色展示区域 -->
+  <div class="character-container">
+    <div class="character-display" id="character-display">
+      <!-- 图片将由JS动态插入 -->
+      <div class="loading-placeholder">
+        <div class="loading-emoji">🍑</div>
+        <p>加载中...</p>
+      </div>
+    </div>
+    
+    <!-- 3D立体阴影 -->
+    <div class="character-shadow" id="character-shadow"></div>
+    
+    <!-- 漂浮粒子效果 -->
+    <div class="particles-container" id="particles-container"></div>
+  </div>
+  
+  <!-- 欢迎卡片 -->
+  <div class="greeting-card">
+    <h2 class="greeting-title" id="greeting-title"></h2>
+    <p class="greeting-text" id="greeting-text"></p>
+    
+    <!-- 随机图片指示器 -->
+    <div class="random-indicator">
+      <span class="indicator-label">当前展示：</span>
+      <span class="indicator-value" id="current-image-index"></span>
+      <span class="indicator-hint">（每次刷新随机展示）</span>
+    </div>
+  </div>
+  
+  <!-- 操作提示 -->
+  <div class="action-hint">
+    <div class="hint-item">
+      <div class="hint-icon">🎮</div>
+      <p>点击左侧导航开始探索功能</p>
+    </div>
+    <div class="hint-item">
+      <div class="hint-icon">✨</div>
+      <p>将鼠标移到图片上查看3D效果</p>
+    </div>
+  </div>
+</section>
