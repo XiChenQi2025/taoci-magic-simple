@@ -6,7 +6,7 @@
   },
   "images": {
     "count": 3,
-    "folder": "../../assets/images/character/",
+    "folder": "./assets/images/character/",
     "files": [
       "taoci-avatar.png",
       "taoci-avatar-2.png",

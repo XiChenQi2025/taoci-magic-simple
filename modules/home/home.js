@@ -26,7 +26,7 @@ class CosmicHomeModule {
   // 加载配置
   async loadConfig() {
     try {
-      const response = await fetch('./config.json');
+      const response = await fetch('modules/home/config.json');
       this.config = await response.json();
       this.totalImages = this.config.images.count;
       console.log('🌌 幻彩星云主题配置加载完成');
@@ -39,7 +39,7 @@ class CosmicHomeModule {
         theme: { name: '幻彩星云主题', version: '1.0.0' },
         images: {
           count: 3,
-          folder: '../../assets/images/character/',
+          folder: './assets/images/character/',
           files: ['taoci-avatar.png', 'taoci-avatar-2.png', 'taoci-avatar-3.png'],
           fallbackEmoji: '👸✨',
           altText: '桃汽水 - 异世界精灵公主',
