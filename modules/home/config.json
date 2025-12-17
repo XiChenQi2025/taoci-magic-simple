@@ -1,23 +1,41 @@
 {
+  "theme": {
+    "name": "幻彩星云主题",
+    "version": "1.0.0",
+    "description": "星空主题，精灵公主悬浮于宇宙之中"
+  },
   "images": {
     "count": 3,
     "folder": "./assets/images/character/",
     "files": [
-      "taoci-avatar-1.png",
+      "taoci-avatar.png",
       "taoci-avatar-2.png",
       "taoci-avatar-3.png"
     ],
-    "fallbackEmoji": "🍑",
-    "altText": "桃汽水 - 异世界精灵公主"
+    "fallbackEmoji": "👸✨",
+    "altText": "桃汽水 - 异世界精灵公主",
+    "randomOnLoad": true
   },
   "greeting": {
     "title": "欢迎来到我的魔力补给站！",
-    "message": "我是来自异世界的精灵公主桃汽水~ 周年庆活动马上就要开始啦，快来一起收集魔力，参加有趣的游戏吧！"
+    "message": "我是来自异世界的精灵公主桃汽水~ 在这片星空中与你相遇，让我们一起收集魔力，创造美好的回忆吧！"
   },
-  "features": {
-    "enable3DEffect": true,
+  "effects": {
+    "enableStars": true,
+    "enableNebula": true,
     "enableParticles": true,
-    "enableShadow": true,
-    "enableHoverEffect": true
+    "enableShootingStars": true,
+    "enableParallax": true,
+    "enableMouseTrail": true
+  },
+  "colors": {
+    "primary": "#FF00FF",
+    "secondary": "#FF66CC",
+    "accent": "#33FF99",
+    "backgroundDark": "#0d0519",
+    "backgroundLight": "#1a0b2e",
+    "nebulaPink": "rgba(255, 110, 255, 0.3)",
+    "nebulaBlue": "rgba(110, 230, 255, 0.3)",
+    "nebulaPurple": "rgba(180, 100, 255, 0.3)"
   }
 }
