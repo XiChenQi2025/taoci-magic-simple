@@ -3,77 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🍑 桃汽水的魔力补给站</title>
+    <title>🍑 桃汽水の魔力补给站 | 异世界精灵公主周年庆典</title>
     
     <!-- 主骨架样式 -->
     <link rel="stylesheet" href="main.css">
     
-    <!-- 字体图标（可选） -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- FontAwesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- 动态模块样式将通过main.js加载 -->
+    <!-- 网站图标 -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
 </head>
 <body>
     <!-- 应用容器 -->
     <div id="app" class="app-container">
-        <!-- 头部区域 -->
-        <header class="main-header">
-            <div class="header-wrapper">
-                <!-- Logo -->
-                <div class="logo-area">
-                    <div class="logo-emoji">🍑</div>
-                    <div class="logo-text">
-                        <h1 class="site-title">桃汽水的魔力补给站</h1>
+        <!-- 导航栏（采用2.md样式） -->
+        <nav class="navbar">
+            <div class="container">
+                <!-- Logo区域 -->
+                <div class="nav-brand">
+                    <div class="brand-icon">🍑</div>
+                    <div class="brand-text">
+                        <h1 class="site-title">桃汽水の魔力补给站</h1>
                         <p class="site-subtitle">异世界精灵公主的周年庆典</p>
                     </div>
                 </div>
                 
-                <!-- 角色形象（占位，后续可替换为皮套） -->
-                <div class="character-preview">
-                    <div class="character-placeholder">
-                        <div class="character-emoji">👸✨</div>
-                        <span>桃汽水</span>
-                    </div>
+                <!-- 移动端菜单按钮 -->
+                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="菜单">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <!-- 导航菜单 -->
+                <div class="nav-menu" id="nav-menu">
+                    <a href="#home" class="nav-link active" data-module="home">
+                        <i class="fas fa-home"></i>
+                        <span>魔力大厅</span>
+                    </a>
+                    <a href="#games" class="nav-link" data-module="games">
+                        <i class="fas fa-gamepad"></i>
+                        <span>收集魔力</span>
+                    </a>
+                    <a href="#wheel" class="nav-link" data-module="wheel">
+                        <i class="fas fa-gift"></i>
+                        <span>祈愿转盘</span>
+                    </a>
+                    <a href="#ranking" class="nav-link" data-module="ranking">
+                        <i class="fas fa-trophy"></i>
+                        <span>魔力榜单</span>
+                    </a>
+                    <a href="#messages" class="nav-link" data-module="messages">
+                        <i class="fas fa-comments"></i>
+                        <span>留言板</span>
+                    </a>
                 </div>
             </div>
-        </header>
-        
-        <!-- 导航区域 -->
-        <nav class="main-nav">
-            <ul class="nav-list" id="nav-list">
-                <!-- 导航项由JS动态生成 -->
-                <!-- 格式：<li><a href="#模块名" class="nav-link"><i class="图标"></i> 模块名</a></li> -->
-            </ul>
         </nav>
-        
-        <!-- 主内容区 -->
+
+        <!-- 主内容区（采用启动包结构） -->
         <main class="content-area">
             <!-- 模块加载容器 -->
             <div id="module-container" class="module-container">
                 <!-- 这里将动态加载模块内容 -->
-                <div class="welcome-message">
-                    <h2>欢迎来到桃汽水的魔力补给站！</h2>
-                    <p>选择左侧的功能模块开始探索吧~</p>
+                <div class="welcome-message" id="welcome-message">
+                    <h2>欢迎来到桃汽水の魔力补给站！</h2>
+                    <p>我是来自异世界的精灵公主桃汽水~</p>
                     <div class="emoji-display">✨🍑🎮📚🎁💬</div>
+                    <p class="loading-hint">正在加载魔力大厅...</p>
                 </div>
             </div>
         </main>
-        
-        <!-- 页脚 -->
-        <footer class="main-footer">
-            <div class="footer-content">
-                <p>© 2024 桃汽水的魔力补给站 | 异世界精灵公主周年庆专属站点</p>
-                <p>仅用于粉丝交流，非商业化使用</p>
+
+        <!-- 页脚（采用2.md样式） -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-logo">
+                        <i class="fas fa-crown"></i>
+                        <span>桃汽水の魔力补给站</span>
+                    </div>
+                    <p class="footer-desc">
+                        来自异世界的精灵公主桃汽水，为感谢契约者们一年的陪伴而特别建立的魔力补给站。
+                        周年庆典特别企划，感谢每一位契约者的参与！
+                    </p>
+                    
+                    <div class="footer-links">
+                        <a href="#home" data-module="home">魔力大厅</a>
+                        <a href="#games" data-module="games">收集魔力</a>
+                        <a href="#wheel" data-module="wheel">祈愿转盘</a>
+                        <a href="#ranking" data-module="ranking">魔力榜单</a>
+                        <a href="#messages" data-module="messages">留言板</a>
+                    </div>
+                    
+                    <div class="footer-info">
+                        <div class="info-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>周年庆：2025年12月25日 19:00</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-code"></i>
+                            <span>版本：v1.0.0</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-heart"></i>
+                            <span>仅用于粉丝交流，非商业用途</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <p>&copy; 2025 桃汽水の魔力补给站 | 最终解释权归桃汽水所有</p>
+                </div>
             </div>
         </footer>
-        
+
+        <!-- 回到顶部按钮 -->
+        <button class="back-to-top" id="back-to-top" aria-label="回到顶部">
+            <i class="fas fa-chevron-up"></i>
+        </button>
+
         <!-- 全局通知容器 -->
         <div id="notification-area" class="notification-area"></div>
     </div>
-    
+
     <!-- 主骨架脚本 -->
+    <script src="config.js"></script>
     <script src="main.js"></script>
-    
-    <!-- 模块脚本将通过main.js动态加载 -->
 </body>
 </html>
