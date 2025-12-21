@@ -73,7 +73,7 @@ export default class FortuneModule {
             // 动态加载外部CSS文件
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = './fortune.css';
+            link.href = './styles/modules/fortune.css';
             link.id = 'fortune-styles-external';
             document.head.appendChild(link);
         }
