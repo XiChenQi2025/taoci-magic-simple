@@ -1,1 +1,568 @@
+/* 盲盒运势模块特有样式 */
 
+.fortune-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 标题区域 */
+.fortune-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    z-index: 10;
+}
+
+.fortune-title {
+    font-size: 3.5rem;
+    color: white;
+    text-shadow: 0 0 20px var(--neon-pink),
+                 0 0 40px rgba(255, 0, 255, 0.5);
+    margin-bottom: 1rem;
+    font-weight: 300;
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    display: inline-block;
+}
+
+.fortune-title::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-pink), transparent);
+}
+
+.fortune-subtitle {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.disclaimer-box {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.8rem 1.5rem;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    border-radius: 20px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+}
+
+/* 表盘容器 */
+.dial-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 2rem auto;
+    z-index: 20;
+}
+
+@media (max-width: 768px) {
+    .dial-container {
+        width: 300px;
+        height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dial-container {
+        width: 250px;
+        height: 250px;
+    }
+}
+
+/* 雷达扫描背景 */
+.radar-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: 
+        radial-gradient(circle at center, 
+            rgba(10, 10, 10, 0.9) 0%,
+            rgba(0, 0, 0, 0.8) 70%);
+    box-shadow: 
+        inset 0 0 50px rgba(0, 0, 0, 0.8),
+        0 0 0 2px rgba(255, 255, 255, 0.1),
+        0 0 50px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+.radar-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-image: 
+        radial-gradient(circle at center, 
+            transparent 0%, 
+            transparent 30%, 
+            rgba(255, 255, 255, 0.05) 30%, 
+            rgba(255, 255, 255, 0.05) 100%),
+        radial-gradient(circle at center, 
+            transparent 0%, 
+            transparent 60%, 
+            rgba(255, 255, 255, 0.05) 60%, 
+            rgba(255, 255, 255, 0.05) 100%),
+        radial-gradient(circle at center, 
+            transparent 0%, 
+            transparent 90%, 
+            rgba(255, 255, 255, 0.05) 90%, 
+            rgba(255, 255, 255, 0.05) 100%);
+}
+
+/* 数字刻度 */
+.number-scale {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.number-tick {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: left center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.number-tick.major {
+    font-size: 1rem;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* 表盘中心 */
+.dial-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ready-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+/* 指针 */
+.needle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 45%;
+    height: 4px;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        var(--neon-pink) 30%,
+        var(--neon-pink) 70%,
+        transparent 100%);
+    transform-origin: left center;
+    transform: rotate(0deg);
+    border-radius: 2px;
+    box-shadow: 0 0 10px var(--neon-pink);
+    z-index: 25;
+    transition: transform 0.1s linear;
+}
+
+.needle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(-50%, -50%);
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--neon-pink);
+    box-shadow: 0 0 15px var(--neon-pink);
+}
+
+/* 数字奔腾效果 */
+.number-runner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+    height: 80%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.running-number {
+    position: absolute;
+    color: var(--neon-blue);
+    font-size: 1.2rem;
+    font-weight: bold;
+    opacity: 0;
+    text-shadow: 0 0 10px var(--neon-blue);
+}
+
+/* 幸运数字显示 */
+.lucky-number-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 20px currentColor;
+    opacity: 0;
+    z-index: 40;
+    transition: all 0.3s ease;
+}
+
+.lucky-number-display.show {
+    opacity: 1;
+}
+
+/* 评级徽章 */
+.level-badge {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.8rem 2rem;
+    border-radius: 25px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    opacity: 0;
+    z-index: 35;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+.level-badge.show {
+    opacity: 1;
+    top: -40px;
+}
+
+/* 解读显示 */
+.fortune-message {
+    width: 90%;
+    max-width: 700px;
+    margin: 3rem auto 2rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-bubble {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    color: white;
+    text-align: center;
+    width: 100%;
+}
+
+.message-bubble::before {
+    content: '💬';
+    position: absolute;
+    top: -25px;
+    left: 30px;
+    font-size: 2rem;
+}
+
+.message-text {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+.message-text .char {
+    opacity: 0;
+    display: inline-block;
+}
+
+/* 控制按钮 */
+.fortune-controls {
+    margin-top: 2rem;
+    text-align: center;
+    z-index: 10;
+}
+
+.scan-button {
+    padding: 1rem 3rem;
+    font-size: 1.3rem;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    background: var(--rainbow-gradient);
+    color: white;
+    border: none;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.scan-button:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255, 0, 255, 0.3);
+}
+
+.scan-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.scan-button .button-text {
+    display: inline-block;
+}
+
+.scan-button .button-loader {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.scan-button.loading .button-text {
+    display: none;
+}
+
+.scan-button.loading .button-loader {
+    display: inline-block;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 扫描次数 */
+.scan-counter {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    z-index: 100;
+}
+
+/* 粒子效果 */
+.particle-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.data-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: var(--neon-blue);
+    border-radius: 50%;
+    box-shadow: 0 0 5px var(--neon-blue);
+    opacity: 0;
+}
+
+/* 状态指示器 */
+.status-indicator {
+    margin-top: 1.5rem;
+    padding: 0.8rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.3s ease;
+    width: 80%;
+    max-width: 500px;
+}
+
+.status-indicator.scanning {
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+/* 背景特效 */
+.background-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(
+        circle at center,
+        rgba(255, 0, 255, 0.1) 0%,
+        transparent 70%
+    );
+    z-index: 1;
+    transition: all 1s ease;
+}
+
+.background-effect.intense {
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(
+        circle at center,
+        rgba(255, 0, 255, 0.3) 0%,
+        rgba(0, 191, 255, 0.2) 50%,
+        transparent 70%
+    );
+}
+
+/* 数字高亮动画 */
+@keyframes numberPulse {
+    0%, 100% { 
+        transform: translate(-50%, -50%) scale(1);
+        text-shadow: 0 0 20px currentColor;
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.1);
+        text-shadow: 0 0 40px currentColor;
+    }
+}
+
+@keyframes badgePop {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.5);
+    }
+    70% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+/* 按钮涟漪效果 */
+@keyframes ripple {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.7);
+    }
+    100% {
+        box-shadow: 0 0 0 20px rgba(255, 0, 255, 0);
+    }
+}
+
+.ripple-effect {
+    animation: ripple 0.6s ease-out;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .fortune-container {
+        padding: 1rem;
+    }
+    
+    .fortune-title {
+        font-size: 2.5rem;
+    }
+    
+    .fortune-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .message-bubble {
+        font-size: 1.1rem;
+    }
+    
+    .scan-button {
+        padding: 0.8rem 2rem;
+        font-size: 1.1rem;
+    }
+    
+    .lucky-number-display {
+        font-size: 4rem;
+    }
+    
+    .level-badge {
+        font-size: 1.3rem;
+        padding: 0.6rem 1.5rem;
+    }
+    
+    .scan-counter {
+        bottom: 1rem;
+        right: 1rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .fortune-title {
+        font-size: 2rem;
+    }
+    
+    .lucky-number-display {
+        font-size: 3rem;
+    }
+    
+    .message-bubble {
+        font-size: 1rem;
+    }
+    
+    .dial-container {
+        width: 250px;
+        height: 250px;
+    }
+}
