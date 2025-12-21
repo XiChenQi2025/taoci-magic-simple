@@ -41,7 +41,7 @@
     transform: translateY(-1px);
 }
 
-/* 颜色变体 */
+/* 颜色变体 - 纯色背景 */
 .btn-pink {
     background-color: var(--neon-pink);
 }
@@ -65,6 +65,7 @@
 
 .btn-yellow {
     background-color: var(--neon-yellow);
+    color: black;
 }
 .btn-yellow::before {
     box-shadow: var(--glow-yellow);
@@ -72,6 +73,7 @@
 
 .btn-green {
     background-color: var(--neon-green);
+    color: black;
 }
 .btn-green::before {
     box-shadow: var(--glow-green);
@@ -86,7 +88,7 @@
 
 /* 卡片样式 */
 .card {
-    background: var(--bg-card);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 15px;
     padding: 1.5rem;
