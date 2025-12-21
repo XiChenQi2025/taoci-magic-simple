@@ -1,1 +1,136 @@
+/* 公共组件样式 */
 
+/* 按钮基础样式 */
+.btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 25px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.btn:hover {
+    transform: translateY(-3px) scale(1.05);
+}
+
+.btn:hover::before {
+    opacity: 1;
+}
+
+.btn:active {
+    transform: translateY(-1px);
+}
+
+/* 颜色变体 */
+.btn-pink {
+    background-color: var(--neon-pink);
+}
+.btn-pink::before {
+    box-shadow: var(--glow-pink);
+}
+
+.btn-purple {
+    background-color: var(--neon-purple);
+}
+.btn-purple::before {
+    box-shadow: var(--glow-purple);
+}
+
+.btn-blue {
+    background-color: var(--neon-blue);
+}
+.btn-blue::before {
+    box-shadow: var(--glow-blue);
+}
+
+.btn-yellow {
+    background-color: var(--neon-yellow);
+}
+.btn-yellow::before {
+    box-shadow: var(--glow-yellow);
+}
+
+.btn-green {
+    background-color: var(--neon-green);
+}
+.btn-green::before {
+    box-shadow: var(--glow-green);
+}
+
+.btn-orange {
+    background-color: var(--neon-orange);
+}
+.btn-orange::before {
+    box-shadow: var(--glow-orange);
+}
+
+/* 卡片样式 */
+.card {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: #333;
+    font-weight: bold;
+}
+
+.card-content {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* 加载指示器 */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--neon-pink);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 工具类 */
+.text-center { text-align: center; }
+.mt-1 { margin-top: 1rem; }
+.mt-2 { margin-top: 2rem; }
+.mb-1 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 2rem; }
+.p-1 { padding: 1rem; }
+.p-2 { padding: 2rem; }
