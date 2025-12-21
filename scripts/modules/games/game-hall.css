@@ -1,0 +1,416 @@
+/* 魔力游戏厅样式 */
+.game-hall-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: var(--bg-primary);
+  overflow: hidden;
+  font-family: var(--font-primary);
+}
+
+/* 背景漂浮图形 */
+.floating-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.floating-shape {
+  position: absolute;
+  opacity: 0.03;
+  animation: float 20s infinite linear;
+}
+
+.shape-tetris { animation-delay: 0s; }
+.shape-snake { animation-delay: 5s; }
+.shape-pacman { animation-delay: 10s; }
+.shape-joystick { animation-delay: 15s; }
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(20px, 20px) rotate(90deg); }
+  50% { transform: translate(0, 40px) rotate(180deg); }
+  75% { transform: translate(-20px, 20px) rotate(270deg); }
+}
+
+/* 页面布局 */
+.game-hall-content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+/* 顶部功能区 */
+.top-section {
+  height: 15%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  margin-bottom: 20px;
+}
+
+.title-area h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  color: var(--neon-blue);
+  text-shadow: 0 0 10px var(--neon-blue);
+}
+
+.title-area .subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-top: 5px;
+  opacity: 0.8;
+}
+
+.controls-area {
+  display: flex;
+  gap: 20px;
+}
+
+.control-btn {
+  background: transparent;
+  border: 1px solid var(--neon-border);
+  color: var(--neon-blue);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-btn:hover {
+  background: var(--neon-blue);
+  color: var(--bg-primary);
+  box-shadow: 0 0 15px var(--neon-blue);
+}
+
+/* 游戏卡片网格区 */
+.games-grid-section {
+  height: 75%;
+  padding: 20px;
+}
+
+.games-grid {
+  display: grid;
+  gap: 30px;
+  height: 100%;
+}
+
+/* 响应式网格布局 */
+@media (min-width: 1024px) {
+  .games-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .games-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 游戏卡片 */
+.game-card {
+  position: relative;
+  background: var(--bg-card);
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: row;
+  height: 250px;
+}
+
+.game-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* 游戏快照区 */
+.game-snapshot {
+  flex: 0 0 60%;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+.game-snapshot::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 30%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+}
+
+.game-snapshot .snapshot-bg {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  animation: gentlePulse 4s infinite ease-in-out;
+  transition: transform 0.3s;
+}
+
+.game-card:hover .game-snapshot .snapshot-bg {
+  animation-play-state: paused;
+  transform: scale(1.05);
+}
+
+@keyframes gentlePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+/* 游戏信息区 */
+.game-info {
+  flex: 0 0 40%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.game-title {
+  font-size: 1.5rem;
+  color: var(--neon-blue);
+  margin-bottom: 10px;
+  text-shadow: 0 0 5px currentColor;
+}
+
+.game-tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.game-tag {
+  background: transparent;
+  border: 1px solid var(--neon-border);
+  color: var(--neon-purple);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  display: inline-block;
+}
+
+.difficulty-stars {
+  margin-bottom: 15px;
+}
+
+.star {
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  margin-right: 2px;
+}
+
+.star.filled {
+  color: var(--neon-yellow);
+  text-shadow: 0 0 5px var(--neon-yellow);
+}
+
+.game-description {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* 启动叠加层 */
+.launch-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 3;
+}
+
+.game-card:hover .launch-overlay {
+  opacity: 1;
+}
+
+.btn-rainbow {
+  background: linear-gradient(45deg, 
+    var(--neon-pink), 
+    var(--neon-purple), 
+    var(--neon-blue)
+  );
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 0 20px rgba(128, 0, 255, 0.5);
+  animation: rainbowGlow 2s infinite alternate;
+}
+
+.btn-rainbow:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(128, 0, 255, 0.8);
+}
+
+@keyframes rainbowGlow {
+  0% { box-shadow: 0 0 20px rgba(255, 0, 128, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(128, 0, 255, 0.5); }
+  100% { box-shadow: 0 0 20px rgba(0, 128, 255, 0.5); }
+}
+
+/* 底部状态区 */
+.bottom-section {
+  height: 10%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* 加载状态 */
+.loading-state {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.loading-state.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.loading-animation {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: var(--neon-purple);
+  border-bottom-color: var(--neon-blue);
+  animation: spin 1s infinite linear;
+  position: relative;
+}
+
+.loading-animation::before,
+.loading-animation::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 3px solid transparent;
+}
+
+.loading-animation::before {
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border-top-color: var(--neon-pink);
+  border-bottom-color: var(--neon-yellow);
+  animation: spin 2s infinite linear reverse;
+}
+
+.loading-text {
+  margin-top: 20px;
+  color: var(--neon-blue);
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 游戏容器 */
+.game-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  z-index: 1001;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.game-container.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* 星光粒子效果 */
+.star-particle {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* 卡片收缩动画 */
+@keyframes cardShrink {
+  0% { transform: scale(1) translateY(0); }
+  50% { transform: scale(0.95) translateY(-4px); }
+  100% { transform: scale(0) translateY(-100px); opacity: 0; }
+}
+
+.card-shrink {
+  animation: cardShrink 0.5s forwards;
+}
+
+/* 大厅淡入淡出 */
+.game-hall-content {
+  transition: opacity 0.3s;
+}
+
+.game-hall-content.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
