@@ -1,19 +1,26 @@
 /* 布局骨架样式 */
 
-/* 页眉样式 - 增强模糊背景，移除透明 */
+/* 页眉样式 - 渐变紫色背景 */
 #app-header {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: rgba(20, 20, 30, 0.85); /* 添加深色半透明背景 */
+    background: linear-gradient(
+        135deg,
+        rgba(90, 0, 150, 0.9) 0%,
+        rgba(140, 0, 255, 0.85) 50%,
+        rgba(90, 0, 150, 0.9) 100%
+    );
     border-bottom: 2px solid;
     border-image: var(--rainbow-gradient) 1;
     padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    backdrop-filter: blur(50px) brightness(0.7); /* 增强模糊和变暗 */
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(50px);
+    box-shadow: 
+        0 4px 30px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(140, 0, 255, 0.3);
 }
 
 .header-brand {
@@ -30,7 +37,7 @@
     align-items: center;
     justify-content: center;
     font-size: 2rem;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     border: 2px solid var(--barbie-pink);
     box-shadow: var(--glow-effect-pink);
     animation: glow-pulse 3s ease-in-out infinite;
@@ -100,14 +107,19 @@
     text-shadow: var(--glow-effect-pink);
 }
 
-/* 移动端菜单 - 增强背景模糊，移除透明 */
+/* 移动端菜单 - 渐变紫色背景 */
 .mobile-menu {
     position: fixed;
     top: 80px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(20, 20, 30, 0.95); /* 深色背景，不透明 */
-    backdrop-filter: blur(60px) brightness(0.6); /* 增强模糊和暗化 */
+    background: linear-gradient(
+        135deg,
+        rgba(70, 0, 130, 0.95) 0%,
+        rgba(120, 0, 200, 0.92) 50%,
+        rgba(70, 0, 130, 0.95) 100%
+    );
+    backdrop-filter: blur(60px);
     border-radius: 20px;
     z-index: 2000;
     display: none;
@@ -119,8 +131,9 @@
     width: 90%;
     max-width: 400px;
     box-shadow: 
-        0 15px 35px rgba(0, 0, 0, 0.6),
-        0 0 0 1px rgba(255, 105, 180, 0.2);
+        0 15px 35px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(255, 105, 180, 0.3),
+        0 0 40px rgba(140, 0, 255, 0.4);
     border: 2px solid var(--barbie-pink);
 }
 
@@ -151,21 +164,44 @@
     cursor: pointer;
 }
 
-/* 移动端菜单链接 - 圆角纯色按钮 */
+/* 移动端菜单链接 - 圆角纯色按钮（保持高对比度） */
 .mobile-menu .nav-link {
     width: 100%;
     justify-content: center;
     padding: 1rem;
     border-radius: 15px;
     margin-bottom: 0.5rem;
-    background-color: rgba(255, 255, 255, 0.1);
+    /* 提高不透明度确保与背景区分 */
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-.mobile-menu .nav-link.pink { background-color: var(--barbie-pink); }
-.mobile-menu .nav-link.blue { background-color: var(--neon-blue); }
-.mobile-menu .nav-link.purple { background-color: var(--neon-purple); }
-.mobile-menu .nav-link.yellow { background-color: var(--neon-yellow); }
-.mobile-menu .nav-link.orange { background-color: var(--neon-orange); }
+/* 移动端按钮颜色保持不变，但增加发光效果提高可见性 */
+.mobile-menu .nav-link.pink { 
+    background-color: var(--barbie-pink); 
+    border-color: var(--barbie-pink);
+    box-shadow: 0 0 15px rgba(255, 105, 180, 0.6);
+}
+.mobile-menu .nav-link.blue { 
+    background-color: var(--neon-blue); 
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 15px rgba(135, 206, 235, 0.6);
+}
+.mobile-menu .nav-link.purple { 
+    background-color: var(--neon-purple); 
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 15px rgba(199, 21, 133, 0.6);
+}
+.mobile-menu .nav-link.yellow { 
+    background-color: var(--neon-yellow); 
+    border-color: var(--neon-yellow);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+.mobile-menu .nav-link.orange { 
+    background-color: var(--neon-orange); 
+    border-color: var(--neon-orange);
+    box-shadow: 0 0 15px rgba(255, 160, 122, 0.6);
+}
 
 /* 主要内容区 */
 #main-content {
@@ -175,15 +211,23 @@
     z-index: 1;
 }
 
-/* 页脚样式 */
+/* 页脚样式 - 渐变紫色背景 */
 #app-footer {
     padding: 2rem;
     text-align: center;
     position: relative;
-    background: rgba(20, 20, 30, 0.85); /* 添加深色半透明背景 */
-    backdrop-filter: blur(30px) brightness(0.7);
+    background: linear-gradient(
+        135deg,
+        rgba(90, 0, 150, 0.9) 0%,
+        rgba(140, 0, 255, 0.85) 50%,
+        rgba(90, 0, 150, 0.9) 100%
+    );
+    backdrop-filter: blur(30px);
     border-top: 2px solid;
     border-image: var(--rainbow-gradient) 1;
+    box-shadow: 
+        0 -4px 30px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(140, 0, 255, 0.3);
 }
 
 .footer-top-line {
@@ -215,7 +259,7 @@
         padding: 0.75rem 1rem;
         flex-wrap: wrap;
         gap: 1rem;
-        backdrop-filter: blur(40px) brightness(0.6);
+        backdrop-filter: blur(40px);
     }
     
     .brand-title {
@@ -250,7 +294,6 @@
     .mobile-menu {
         top: 70px;
         padding: 1.5rem;
-        backdrop-filter: blur(50px) brightness(0.5);
     }
     
     #app-footer {
