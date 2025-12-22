@@ -4,18 +4,21 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 28px;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 500;
+    padding: 14px 32px;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 600;
     text-decoration: none;
     cursor: pointer;
     transition: var(--transition);
-    border: none;
+    border: 3px solid rgba(255, 255, 255, 0.95);
     outline: none;
     position: relative;
     overflow: hidden;
     letter-spacing: 0.5px;
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.05),
+        0 0 0 2px rgba(255, 255, 255, 0.9) inset;
 }
 
 .btn::after {
@@ -42,154 +45,186 @@
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
     box-shadow: 
-        0 4px 15px rgba(179, 157, 219, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        0 6px 20px rgba(179, 157, 219, 0.3),
+        0 0 0 3px rgba(255, 255, 255, 0.9) inset;
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: 
-        0 8px 25px rgba(179, 157, 219, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+        0 10px 30px rgba(179, 157, 219, 0.4),
+        0 0 0 3px rgba(255, 255, 255, 0.95) inset;
 }
 
 /* 粉色按钮 */
 .btn-pink {
     background: linear-gradient(135deg, var(--secondary), #F06292);
     color: white;
+    border: 3px solid rgba(255, 255, 255, 0.95);
     box-shadow: 
-        0 4px 15px rgba(244, 143, 177, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        0 6px 20px rgba(244, 143, 177, 0.3),
+        0 0 0 3px rgba(255, 255, 255, 0.9) inset;
 }
 
 .btn-pink:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: 
-        0 8px 25px rgba(244, 143, 177, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+        0 10px 30px rgba(244, 143, 177, 0.4),
+        0 0 0 3px rgba(255, 255, 255, 0.95) inset;
 }
 
 /* 蓝色按钮 */
 .btn-blue {
     background: linear-gradient(135deg, var(--blue), #64B5F6);
     color: white;
+    border: 3px solid rgba(255, 255, 255, 0.95);
     box-shadow: 
-        0 4px 15px rgba(144, 202, 249, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        0 6px 20px rgba(144, 202, 249, 0.3),
+        0 0 0 3px rgba(255, 255, 255, 0.9) inset;
 }
 
 .btn-blue:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: 
-        0 8px 25px rgba(144, 202, 249, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+        0 10px 30px rgba(144, 202, 249, 0.4),
+        0 0 0 3px rgba(255, 255, 255, 0.95) inset;
 }
 
 /* 紫色按钮 */
 .btn-purple {
     background: linear-gradient(135deg, var(--purple), #BA68C8);
     color: white;
+    border: 3px solid rgba(255, 255, 255, 0.95);
     box-shadow: 
-        0 4px 15px rgba(206, 147, 216, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        0 6px 20px rgba(206, 147, 216, 0.3),
+        0 0 0 3px rgba(255, 255, 255, 0.9) inset;
 }
 
 .btn-purple:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: 
-        0 8px 25px rgba(206, 147, 216, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+        0 10px 30px rgba(206, 147, 216, 0.4),
+        0 0 0 3px rgba(255, 255, 255, 0.95) inset;
 }
 
 /* 黄色按钮 */
 .btn-yellow {
     background: linear-gradient(135deg, var(--yellow), #FFF176);
     color: #424242;
+    border: 3px solid rgba(255, 255, 255, 0.95);
     box-shadow: 
-        0 4px 15px rgba(255, 245, 157, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        0 6px 20px rgba(255, 245, 157, 0.3),
+        0 0 0 3px rgba(255, 255, 255, 0.9) inset;
 }
 
 .btn-yellow:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: 
-        0 8px 25px rgba(255, 245, 157, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+        0 10px 30px rgba(255, 245, 157, 0.4),
+        0 0 0 3px rgba(255, 255, 255, 0.95) inset;
 }
 
 /* 橙色按钮 */
 .btn-orange {
     background: linear-gradient(135deg, var(--orange), #FFB74D);
     color: white;
+    border: 3px solid rgba(255, 255, 255, 0.95);
     box-shadow: 
-        0 4px 15px rgba(255, 204, 128, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        0 6px 20px rgba(255, 204, 128, 0.3),
+        0 0 0 3px rgba(255, 255, 255, 0.9) inset;
 }
 
 .btn-orange:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: 
-        0 8px 25px rgba(255, 204, 128, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+        0 10px 30px rgba(255, 204, 128, 0.4),
+        0 0 0 3px rgba(255, 255, 255, 0.95) inset;
 }
 
 /* 彩虹渐变按钮 */
 .btn-rainbow {
     background: var(--rainbow);
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.9);
+    border: 3px solid rgba(255, 255, 255, 0.95);
     box-shadow: 
-        0 4px 15px rgba(179, 157, 219, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-    animation: soft-glow 3s ease-in-out infinite;
+        0 6px 20px rgba(179, 157, 219, 0.3),
+        0 0 0 3px rgba(255, 255, 255, 0.9) inset;
+    animation: soft-glow 4s ease-in-out infinite;
 }
 
 .btn-rainbow:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: 
-        0 8px 25px rgba(179, 157, 219, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+        0 10px 30px rgba(179, 157, 219, 0.4),
+        0 0 0 3px rgba(255, 255, 255, 0.95) inset;
     animation: soft-glow 2s ease-in-out infinite;
 }
 
 /* ==================== 卡片组件 ==================== */
 .card {
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: 16px;
-    padding: 24px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 3px solid rgba(255, 255, 255, 0.95);
+    border-radius: 18px;
+    padding: 28px;
     box-shadow: 
-        var(--shadow-md),
-        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+        var(--shadow-lg),
+        0 0 0 2px rgba(255, 255, 255, 0.8) inset;
     transition: var(--transition);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--rainbow);
+    border-radius: 18px 18px 0 0;
 }
 
 .card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-6px);
     box-shadow: 
-        var(--shadow-lg),
-        0 0 20px rgba(179, 157, 219, 0.1),
-        0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+        var(--shadow-xl),
+        0 0 25px rgba(179, 157, 219, 0.15),
+        0 0 0 2px rgba(255, 255, 255, 0.9) inset;
 }
 
 .card-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
     color: #424242;
     background: linear-gradient(135deg, var(--primary), var(--purple));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 8px;
+}
+
+.card-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(135deg, var(--primary), var(--purple));
+    border-radius: 2px;
 }
 
 .card-content {
     color: #757575;
     line-height: 1.6;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
 }
 
 /* ==================== 通用工具类 ==================== */
@@ -202,12 +237,13 @@
 .text-muted { color: #9E9E9E; }
 
 .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(179, 157, 219, 0.2);
+    width: 45px;
+    height: 45px;
+    border: 4px solid rgba(179, 157, 219, 0.2);
     border-top-color: var(--primary);
+    border-right-color: var(--purple);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin 1.2s linear infinite;
 }
 
 @keyframes spin {
