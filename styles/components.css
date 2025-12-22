@@ -1,138 +1,169 @@
-/* 公共组件样式 */
+/* ==================== 按钮组件（周年庆主题） ==================== */
 
-/* 按钮基础样式 */
 .btn {
-    padding: 0.8rem 1.5rem;
-    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md) var(--spacing-xl);
     border-radius: 25px;
-    font-size: 1rem;
+    font-size: var(--font-size-base);
     font-weight: bold;
+    text-decoration: none;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transition);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    outline: none;
     position: relative;
     overflow: hidden;
-    color: white;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
-.btn::before {
+.btn::after {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 25px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.3), 
+        transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
 }
 
-.btn:hover {
+.btn:hover::after {
+    transform: translateX(100%);
+}
+
+/* 荧光粉色按钮 */
+.btn-primary {
+    background: rgba(255, 110, 255, 0.95);
+    color: white;
+    box-shadow: 
+        0 0 20px rgba(255, 110, 255, 0.7),
+        inset 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.btn-primary:hover {
+    background: rgba(255, 130, 255, 0.95);
+    box-shadow: 
+        0 0 30px rgba(255, 110, 255, 0.9),
+        inset 0 0 20px rgba(255, 255, 255, 0.5);
     transform: translateY(-3px) scale(1.05);
 }
 
-.btn:hover::before {
-    opacity: 1;
-}
-
-.btn:active {
-    transform: translateY(-1px);
-}
-
-/* 颜色变体 - 纯色背景 (更新颜色变量) */
-.btn-pink {
-    background-color: var(--barbie-pink);
-}
-.btn-pink::before {
-    box-shadow: var(--glow-effect-pink);
-}
-
-.btn-purple {
-    background-color: var(--neon-purple);
-}
-.btn-purple::before {
-    box-shadow: var(--glow-effect-purple);
-}
-
+/* 荧光蓝色按钮 */
 .btn-blue {
-    background-color: var(--neon-blue);
-}
-.btn-blue::before {
-    box-shadow: var(--glow-effect-blue);
+    background: rgba(94, 209, 255, 0.95);
+    color: white;
+    box-shadow: 
+        0 0 20px rgba(94, 209, 255, 0.7),
+        inset 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
+.btn-blue:hover {
+    background: rgba(114, 229, 255, 0.95);
+    box-shadow: 
+        0 0 30px rgba(94, 209, 255, 0.9),
+        inset 0 0 20px rgba(255, 255, 255, 0.5);
+    transform: translateY(-3px) scale(1.05);
+}
+
+/* 荧光紫色按钮 */
+.btn-purple {
+    background: rgba(178, 110, 255, 0.95);
+    color: white;
+    box-shadow: 
+        0 0 20px rgba(178, 110, 255, 0.7),
+        inset 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.btn-purple:hover {
+    background: rgba(198, 130, 255, 0.95);
+    box-shadow: 
+        0 0 30px rgba(178, 110, 255, 0.9),
+        inset 0 0 20px rgba(255, 255, 255, 0.5);
+    transform: translateY(-3px) scale(1.05);
+}
+
+/* 荧光黄色按钮 */
 .btn-yellow {
-    background-color: var(--neon-yellow);
-    color: black;
-}
-.btn-yellow::before {
-    box-shadow: var(--glow-effect-yellow);
-}
-
-.btn-green {
-    background-color: var(--neon-green);
-    color: black;
-}
-.btn-green::before {
-    box-shadow: 0 0 15px rgba(152, 251, 152, 0.5);
-}
-
-.btn-orange {
-    background-color: var(--neon-orange);
-}
-.btn-orange::before {
-    box-shadow: var(--glow-effect-orange);
-}
-
-/* 卡片样式 */
-.card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-}
-
-.card-title {
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
+    background: rgba(255, 238, 88, 0.95);
     color: #333;
-    font-weight: bold;
+    box-shadow: 
+        0 0 20px rgba(255, 238, 88, 0.7),
+        inset 0 0 15px rgba(255, 255, 255, 0.5);
 }
 
-.card-content {
-    color: #666;
-    line-height: 1.6;
+.btn-yellow:hover {
+    background: rgba(255, 248, 108, 0.95);
+    box-shadow: 
+        0 0 30px rgba(255, 238, 88, 0.9),
+        inset 0 0 20px rgba(255, 255, 255, 0.7);
+    transform: translateY(-3px) scale(1.05);
 }
 
-/* 加载指示器 */
-.loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
-    border-top-color: var(--barbie-pink);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+/* 荧光橙色按钮 */
+.btn-orange {
+    background: rgba(255, 167, 94, 0.95);
+    color: white;
+    box-shadow: 
+        0 0 20px rgba(255, 167, 94, 0.7),
+        inset 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+.btn-orange:hover {
+    background: rgba(255, 187, 114, 0.95);
+    box-shadow: 
+        0 0 30px rgba(255, 167, 94, 0.9),
+        inset 0 0 20px rgba(255, 255, 255, 0.5);
+    transform: translateY(-3px) scale(1.05);
 }
 
-/* 工具类 */
-.text-center { text-align: center; }
-.mt-1 { margin-top: 1rem; }
-.mt-2 { margin-top: 2rem; }
-.mb-1 { margin-bottom: 1rem; }
-.mb-2 { margin-bottom: 2rem; }
-.p-1 { padding: 1rem; }
-.p-2 { padding: 2rem; }
+/* 彩虹渐变按钮 */
+.btn-rainbow {
+    background: var(--rainbow);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 
+        0 0 20px rgba(255, 110, 255, 0.7),
+        0 0 30px rgba(255, 110, 255, 0.5);
+    animation: rainbow-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes rainbow-glow {
+    0% {
+        box-shadow: 
+            0 0 20px rgba(255, 110, 255, 0.7),
+            0 0 30px rgba(255, 110, 255, 0.5);
+    }
+    100% {
+        box-shadow: 
+            0 0 25px rgba(255, 110, 255, 0.9),
+            0 0 35px rgba(255, 110, 255, 0.7),
+            0 0 45px rgba(255, 110, 255, 0.5);
+    }
+}
+
+.btn-rainbow:hover {
+    animation: rainbow-glow-fast 1s ease-in-out infinite alternate;
+    transform: translateY(-3px) scale(1.05);
+}
+
+@keyframes rainbow-glow-fast {
+    0% {
+        box-shadow: 
+            0 0 25px rgba(255, 110, 255, 0.9),
+            0 0 35px rgba(255, 110, 255, 0.7),
+            0 0 45px rgba(255, 110, 255, 0.5);
+    }
+    100% {
+        box-shadow: 
+            0 0 30px rgba(255, 110, 255, 1),
+            0 0 40px rgba(255, 110, 255, 0.8),
+            0 0 50px rgba(255, 110, 255, 0.6),
+            0 0 60px rgba(255, 110, 255, 0.4);
+    }
+}
