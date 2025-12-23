@@ -92,7 +92,7 @@ export default class HomeModule {
         // 动态加载外部CSS文件
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = './home-styles.css';
+        link.href = '../../../styles/modules/home-styles.css';
         link.id = 'home-module-styles-external';
         document.head.appendChild(link);
     }
