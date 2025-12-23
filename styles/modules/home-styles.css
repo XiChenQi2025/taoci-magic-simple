@@ -1,1 +1,405 @@
+/* 首页模块特有样式 */
 
+/* 动态皮套图容器 */
+.character-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.character-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.character-image.loaded {
+    opacity: 1;
+}
+
+.character-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle at 30% 50%,
+        transparent 20%,
+        rgba(10, 10, 10, 0.4) 70%
+    );
+    z-index: 1;
+}
+
+.character-credit {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    z-index: 2;
+}
+
+/* 内容悬浮层 */
+.home-content-layer {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    padding: 2rem;
+}
+
+/* 顶部留空区域 */
+.home-top-space {
+    height: 20vh;
+    width: 100%;
+}
+
+/* 中间内容区 */
+.home-middle-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 1400px;
+    height: 60vh;
+    gap: 2rem;
+}
+
+/* 底部留空区域 */
+.home-bottom-space {
+    height: 20vh;
+    width: 100%;
+}
+
+/* 公告板卡片 */
+.announcement-card {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 2rem;
+    width: 45%;
+    min-height: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+                var(--glow-yellow);
+    border-top: 4px solid;
+    border-image: var(--rainbow-gradient) 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.announcement-title {
+    font-size: 1.8rem;
+    color: var(--neon-yellow);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.countdown-display {
+    font-size: 1.4rem;
+    color: var(--neon-orange);
+    text-align: center;
+    margin: 1rem 0;
+    padding: 0.8rem;
+    background: rgba(255, 165, 0, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 165, 0, 0.3);
+}
+
+.highlights-list {
+    list-style: none;
+    padding: 1rem 0;
+}
+
+.highlights-list li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.8rem 0;
+    font-size: 1.1rem;
+}
+
+.highlight-icon {
+    font-size: 1.5rem;
+    width: 40px;
+    text-align: center;
+}
+
+.schedule-btn {
+    display: block;
+    margin: 1.5rem auto;
+    padding: 0.8rem 1.5rem;
+    background: var(--neon-yellow);
+    color: #333;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.schedule-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glow-yellow);
+}
+
+.schedule-panel {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    display: none;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.schedule-panel.active {
+    display: block;
+}
+
+.schedule-item {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.schedule-time {
+    font-weight: bold;
+    color: var(--neon-purple);
+    width: 80px;
+}
+
+.subscribe-btn {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    font-size: 1.1rem;
+}
+
+/* 留言墙卡片 */
+.message-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 2rem;
+    width: 45%;
+    min-height: 400px;
+    position: relative;
+    border: 2px solid var(--neon-pink);
+    box-shadow: var(--glow-pink);
+}
+
+.message-card::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: -20px;
+    width: 40px;
+    height: 40px;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FF00FF"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>') no-repeat center;
+    background-size: contain;
+}
+
+.streamer-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--neon-pink);
+    box-shadow: var(--glow-pink);
+    margin-bottom: 1rem;
+}
+
+.message-content {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #333;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.message-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 0, 255, 0.2);
+}
+
+.message-date {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.message-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--neon-pink);
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 50%;
+}
+
+.control-btn:hover {
+    background: rgba(255, 0, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.like-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 0, 255, 0.1);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    color: var(--neon-pink);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.like-btn:hover {
+    background: rgba(255, 0, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.like-btn.liked {
+    background: var(--neon-pink);
+    color: white;
+}
+
+.message-counter {
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* 弹幕系统 */
+.barrage-container {
+    position: fixed;
+    bottom: 10%;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    z-index: 50;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.barrage-item {
+    position: absolute;
+    white-space: nowrap;
+    font-size: 1rem;
+    opacity: 0.8;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    text-shadow: 0 0 5px currentColor;
+}
+
+.barrage-item:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* 粒子系统 */
+.particle-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 40;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+    .home-middle-content {
+        flex-direction: column;
+        justify-content: center;
+        gap: 3rem;
+        height: auto;
+    }
+    
+    .announcement-card,
+    .message-card {
+        width: 90%;
+        max-width: 600px;
+    }
+}
+
+@media (max-width: 768px) {
+    .home-content-layer {
+        padding: 1rem;
+    }
+    
+    .character-image {
+        object-fit: contain;
+    }
+    
+    .announcement-title {
+        font-size: 1.5rem;
+    }
+    
+    .message-content {
+        font-size: 1.1rem;
+    }
+    
+    .barrage-container {
+        display: none; /* 移动端关闭弹幕保证性能 */
+    }
+    
+    .particle-container {
+        display: none; /* 移动端关闭粒子效果 */
+    }
+}
