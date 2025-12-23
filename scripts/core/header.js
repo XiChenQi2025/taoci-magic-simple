@@ -55,16 +55,25 @@ export default class Header {
         
         header.appendChild(mobileBtn);
         
-        // 移动端菜单
+        // 移动端菜单 - 使用新的结构
         const mobileMenu = document.createElement('div');
         mobileMenu.className = 'mobile-menu';
+        
+        // 移动端菜单头部（包含关闭按钮）
+        const mobileMenuHeader = document.createElement('div');
+        mobileMenuHeader.className = 'mobile-menu-header';
         
         const closeBtn = document.createElement('button');
         closeBtn.className = 'close-menu-btn';
         closeBtn.innerHTML = '×';
         closeBtn.setAttribute('aria-label', '关闭菜单');
         
-        mobileMenu.appendChild(closeBtn);
+        mobileMenuHeader.appendChild(closeBtn);
+        mobileMenu.appendChild(mobileMenuHeader);
+        
+        // 移动端菜单内容区域
+        const mobileMenuContent = document.createElement('div');
+        mobileMenuContent.className = 'mobile-menu-content';
         
         this.routes.forEach(route => {
             const link = document.createElement('a');
@@ -72,11 +81,12 @@ export default class Header {
             link.href = route.path;
             link.innerHTML = `${route.emoji} ${route.name}`;
             link.setAttribute('data-path', route.path);
-            link.style.fontSize = '1.2rem';
+            link.style.fontSize = '1.1rem';
             
-            mobileMenu.appendChild(link);
+            mobileMenuContent.appendChild(link);
         });
         
+        mobileMenu.appendChild(mobileMenuContent);
         document.body.appendChild(mobileMenu);
         
         // 移动端菜单状态
