@@ -64,10 +64,10 @@ export default class AnswerBookModule {
     injectStyles() {
         // 检查是否已注入样式
         if (!document.getElementById('answer-book-styles-external')) {
-            // 动态加载外部CSS文件（在同一目录下）
+            // 动态加载外部CSS文件（使用主骨架的模块样式路径）
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = './answer-book.css'; // 修正为同一目录
+            link.href = '/styles/modules/answer-book.css'; // 修正为正确的路径
             link.id = 'answer-book-styles-external';
             document.head.appendChild(link);
         }
