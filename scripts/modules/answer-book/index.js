@@ -56,23 +56,18 @@ export default class AnswerBookModule {
         // 清理样式
         const style = document.getElementById('answer-book-styles');
         if (style) style.remove();
+        
+        const link = document.getElementById('answer-book-styles-external');
+        if (link) link.remove();
     }
 
     injectStyles() {
         // 检查是否已注入样式
-        if (!document.getElementById('answer-book-styles')) {
-            const style = document.createElement('style');
-            style.id = 'answer-book-styles';
-            style.textContent = `
-                /* 这里应该是answer-book.css的内容 */
-                /* 由于CSS内容较长，我们在外部文件中定义 */
-            `;
-            document.head.appendChild(style);
-            
-            // 动态加载外部CSS文件
+        if (!document.getElementById('answer-book-styles-external')) {
+            // 动态加载外部CSS文件（在同一目录下）
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = './styles/modules/answer-book.css';
+            link.href = './answer-book.css'; // 修正为同一目录
             link.id = 'answer-book-styles-external';
             document.head.appendChild(link);
         }
