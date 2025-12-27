@@ -8,10 +8,11 @@ export default class AnswerBookModule {
         this.currentAnswer = '';
         this.answerHistory = [];
         this.isHistoryOpen = false;
+        this.isHistoryExpanded = false; // 新增：历史记录展开状态
         
         // 绑定方法
         this.handleAskClick = this.handleAskClick.bind(this);
-        this.toggleHistory = this.toggleHistory.bind(this);
+        this.toggleHistoryExpansion = this.toggleHistoryExpansion.bind(this);
         this.clearHistory = this.clearHistory.bind(this);
     }
 
@@ -44,14 +45,12 @@ export default class AnswerBookModule {
         // 清理事件监听
         const book = document.querySelector('.book');
         const askButton = document.querySelector('.ask-button');
-        const historyToggle = document.querySelector('.history-toggle');
-        const closeHistory = document.querySelector('.close-history');
-        const clearHistoryBtn = document.querySelector('.clear-history');
+        const historyHeader = document.querySelector('.history-header');
+        const clearHistoryBtn = document.querySelector('.clear-history-btn');
         
         if (book) book.removeEventListener('click', this.handleAskClick);
         if (askButton) askButton.removeEventListener('click', this.handleAskClick);
-        if (historyToggle) historyToggle.removeEventListener('click', this.toggleHistory);
-        if (closeHistory) closeHistory.removeEventListener('click', this.toggleHistory);
+        if (historyHeader) historyHeader.removeEventListener('click', this.toggleHistoryExpansion);
         if (clearHistoryBtn) clearHistoryBtn.removeEventListener('click', this.clearHistory);
         
         // 清理样式 - 使用CSS加载工具
@@ -82,36 +81,38 @@ export default class AnswerBookModule {
                 margin: 0 auto;
                 padding: 2rem 1rem;
                 min-height: 100vh;
+                background: #1a1a2e;
+                color: white;
             }
             .book-title {
-                font-size: 3.5rem;
-                color: #B39DDB;
+                font-size: 3rem;
                 text-align: center;
                 margin-bottom: 1rem;
+                color: #B39DDB;
             }
             .book-container {
-                width: 300px;
-                height: 400px;
+                width: 280px;
+                height: 380px;
                 margin: 2rem auto;
-                background: linear-gradient(45deg, #1a1a2e, #16213e);
-                border-radius: 10px;
+                background: #2a273c;
+                border-radius: 15px;
             }
             .answer-display {
-                background: rgba(255, 250, 240, 0.95);
-                border-radius: 10px;
+                background: #fffaf0;
+                border-radius: 12px;
                 padding: 2rem;
                 text-align: center;
             }
             .answer-text {
-                font-size: 2.2rem;
+                font-size: 1.8rem;
                 color: #333;
                 font-family: 'Georgia', serif;
             }
             .ask-button {
-                padding: 1rem 3rem;
-                font-size: 1.3rem;
-                border-radius: 30px;
-                background: linear-gradient(135deg, #CE93D8, #BA68C8);
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #B39DDB, #90CAF9);
                 color: white;
                 border: none;
                 cursor: pointer;
@@ -131,9 +132,9 @@ export default class AnswerBookModule {
                 
                 <!-- 标题区域 -->
                 <div class="book-header">
-                    <h1 class="book-title">答案之书</h1>
-                    <p class="book-subtitle">请在心中思考你的问题，然后点击下方书本</p>
-                    <p class="book-disclaimer">本玩法仅供娱乐，切勿迷信</p>
+                    <h1 class="book-title">魔法答案之书</h1>
+                    <p class="book-subtitle">向魔法提问，获取你内心的答案</p>
+                    <p class="book-disclaimer">答案仅供参考，最终的选择在你心中</p>
                 </div>
                 
                 <!-- 书本容器 -->
@@ -153,29 +154,32 @@ export default class AnswerBookModule {
                 
                 <!-- 状态指示器 -->
                 <div class="status-indicator" id="status-indicator">
-                    准备好接受答案了吗？点击书本开始
+                    准备好了吗？点击魔法球或书本开始
                 </div>
                 
                 <!-- 控制按钮 -->
                 <div class="book-controls">
-                    <button class="btn btn-purple ask-button" id="ask-button">
-                        <span class="button-text">点击获取答案</span>
+                    <button class="ask-button" id="ask-button">
+                        <span class="button-text">提问</span>
                         <div class="button-loader"></div>
                     </button>
+                    <div class="action-tip">点击上方书本也可以获取答案</div>
                 </div>
                 
-                <!-- 历史记录侧边栏 -->
-                <button class="history-toggle" id="history-toggle">
-                    📜
-                </button>
-                
-                <div class="history-sidebar" id="history-sidebar">
+                <!-- 历史记录区域 -->
+                <div class="history-section" id="history-section">
                     <div class="history-header">
-                        <h3 class="history-title">历史答案</h3>
-                        <button class="close-history">×</button>
+                        <div style="display: flex; align-items: center;">
+                            <h3 class="history-title">答案回忆</h3>
+                            <span class="history-count" id="history-count">0</span>
+                        </div>
+                        <div class="history-toggle-icon">▼</div>
                     </div>
-                    <ul class="history-list" id="history-list"></ul>
-                    <button class="clear-history">清空历史</button>
+                    
+                    <div class="history-list-container" id="history-list-container">
+                        <ul class="history-list" id="history-list"></ul>
+                        <button class="clear-history-btn" id="clear-history-btn">清空回忆</button>
+                    </div>
                 </div>
             </div>
         `;
@@ -188,9 +192,12 @@ export default class AnswerBookModule {
         this.askButton = container.querySelector('#ask-button');
         this.backgroundGlow = container.querySelector('#background-glow');
         this.particleContainer = container.querySelector('#particle-container');
-        this.historyToggle = container.querySelector('#history-toggle');
-        this.historySidebar = container.querySelector('#history-sidebar');
+        this.historySection = container.querySelector('#history-section');
         this.historyList = container.querySelector('#history-list');
+        this.historyListContainer = container.querySelector('#history-list-container');
+        this.historyHeader = container.querySelector('.history-header');
+        this.historyCount = container.querySelector('#history-count');
+        this.clearHistoryBtn = document.querySelector('#clear-history-btn');
     }
 
     async handleAskClick() {
@@ -231,16 +238,16 @@ export default class AnswerBookModule {
         // 更新UI状态
         switch (newState) {
             case 'IDLE':
-                this.statusIndicator.textContent = '准备好接受答案了吗？点击书本开始';
+                this.statusIndicator.textContent = '准备好了吗？点击魔法球或书本开始';
                 this.statusIndicator.className = 'status-indicator';
                 this.askButton.disabled = false;
                 this.askButton.classList.remove('loading');
-                this.askButton.querySelector('.button-text').textContent = '点击获取答案';
+                this.askButton.querySelector('.button-text').textContent = '提问';
                 this.backgroundGlow.classList.remove('intense');
                 break;
                 
             case 'THINKING':
-                this.statusIndicator.textContent = '答案之书正在寻找答案…';
+                this.statusIndicator.textContent = '魔法书正在寻找答案，请稍候...';
                 this.statusIndicator.className = 'status-indicator thinking';
                 this.askButton.disabled = true;
                 this.askButton.classList.add('loading');
@@ -248,15 +255,15 @@ export default class AnswerBookModule {
                 break;
                 
             case 'REVEALING':
-                this.statusIndicator.textContent = '答案正在显现…';
+                this.statusIndicator.textContent = '魔法答案正在显现...';
                 break;
                 
             case 'SHOWING':
-                this.statusIndicator.textContent = '这是你的答案';
+                this.statusIndicator.textContent = '这是魔法书给你的答案';
                 this.statusIndicator.className = 'status-indicator';
                 this.askButton.disabled = false;
                 this.askButton.classList.remove('loading');
-                this.askButton.querySelector('.button-text').textContent = '再问一次';
+                this.askButton.querySelector('.button-text').textContent = '再次提问';
                 this.backgroundGlow.classList.remove('intense');
                 break;
         }
@@ -296,7 +303,7 @@ export default class AnswerBookModule {
         this.particleContainer.innerHTML = '';
         
         // 创建星光粒子
-        const particleCount = 50;
+        const particleCount = 30;
         
         for (let i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
@@ -418,13 +425,13 @@ export default class AnswerBookModule {
         const centerY = bookRect.top + bookRect.height / 2;
         
         // 创建向中心聚集的粒子
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 20; i++) {
             const particle = document.createElement('div');
             particle.className = 'star-particle';
             
             // 从书本周围随机位置开始
             const angle = Math.random() * Math.PI * 2;
-            const distance = 100 + Math.random() * 100;
+            const distance = 80 + Math.random() * 80;
             const startX = centerX + Math.cos(angle) * distance;
             const startY = centerY + Math.sin(angle) * distance;
             
@@ -467,7 +474,7 @@ export default class AnswerBookModule {
         
         // 逐字显示答案
         const chars = answer.split('');
-        const delay = 100; // 每个字符的显示延迟
+        const delay = 80; // 每个字符的显示延迟
         
         for (let i = 0; i < chars.length; i++) {
             const charSpan = document.createElement('span');
@@ -497,11 +504,6 @@ export default class AnswerBookModule {
                     easing: 'ease-out',
                     fill: 'forwards'
                 });
-                
-                // 播放打字音效（可选）
-                if (chars[i] !== ' ') {
-                    this.playTypeSound();
-                }
             }, i * delay);
         }
         
@@ -509,35 +511,6 @@ export default class AnswerBookModule {
         await new Promise(resolve => {
             setTimeout(resolve, chars.length * delay + 500);
         });
-    }
-
-    playTypeSound() {
-        // 简单的打字音效
-        try {
-            // 创建音频上下文
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
-            
-            const audioContext = new AudioContext();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            // 随机音高
-            oscillator.frequency.value = 800 + Math.random() * 400;
-            oscillator.type = 'sine';
-            
-            gainNode.gain.value = 0.1;
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-            
-            oscillator.start();
-            oscillator.stop(audioContext.currentTime + 0.1);
-            
-        } catch (error) {
-            // 音频播放失败，静默处理
-        }
     }
 
     resetBook() {
@@ -560,34 +533,24 @@ export default class AnswerBookModule {
 
     bindEvents() {
         // 书本点击事件
-        this.book.addEventListener('click', this.handleAskClick);
+        if (this.book) {
+            this.book.addEventListener('click', this.handleAskClick);
+        }
         
         // 按钮点击事件
-        this.askButton.addEventListener('click', this.handleAskClick);
+        if (this.askButton) {
+            this.askButton.addEventListener('click', this.handleAskClick);
+        }
         
-        // 历史记录切换
-        this.historyToggle.addEventListener('click', this.toggleHistory);
-        
-        // 关闭历史记录
-        const closeHistory = document.querySelector('.close-history');
-        if (closeHistory) {
-            closeHistory.addEventListener('click', this.toggleHistory);
+        // 历史记录展开/收起
+        if (this.historyHeader) {
+            this.historyHeader.addEventListener('click', this.toggleHistoryExpansion);
         }
         
         // 清空历史记录
-        const clearHistoryBtn = document.querySelector('.clear-history');
-        if (clearHistoryBtn) {
-            clearHistoryBtn.addEventListener('click', this.clearHistory);
+        if (this.clearHistoryBtn) {
+            this.clearHistoryBtn.addEventListener('click', this.clearHistory);
         }
-        
-        // 点击其他地方关闭历史记录
-        document.addEventListener('click', (e) => {
-            if (this.isHistoryOpen && 
-                !e.target.closest('.history-sidebar') && 
-                !e.target.closest('.history-toggle')) {
-                this.toggleHistory();
-            }
-        });
     }
 
     // 历史记录功能
@@ -596,6 +559,7 @@ export default class AnswerBookModule {
         if (savedHistory) {
             this.answerHistory = JSON.parse(savedHistory);
             this.renderHistory();
+            this.updateHistoryCount();
         }
     }
 
@@ -607,7 +571,6 @@ export default class AnswerBookModule {
         const historyItem = {
             answer: answer,
             timestamp: new Date().toLocaleString('zh-CN', {
-                year: 'numeric',
                 month: 'short',
                 day: 'numeric',
                 hour: '2-digit',
@@ -617,13 +580,19 @@ export default class AnswerBookModule {
         
         this.answerHistory.unshift(historyItem);
         
-        // 最多保存50条记录
-        if (this.answerHistory.length > 50) {
-            this.answerHistory = this.answerHistory.slice(0, 50);
+        // 最多保存30条记录
+        if (this.answerHistory.length > 30) {
+            this.answerHistory = this.answerHistory.slice(0, 30);
         }
         
         this.saveHistory();
         this.renderHistory();
+        this.updateHistoryCount();
+        
+        // 如果历史记录是收起的，自动展开
+        if (!this.isHistoryExpanded) {
+            this.toggleHistoryExpansion();
+        }
     }
 
     renderHistory() {
@@ -631,38 +600,52 @@ export default class AnswerBookModule {
         
         if (this.answerHistory.length === 0) {
             this.historyList.innerHTML = `
-                <li style="color: rgba(255,255,255,0.5); text-align: center; padding: 2rem;">
-                    还没有历史记录
+                <li class="no-history">
+                    还没有答案回忆，点击上方按钮开始提问
                 </li>
             `;
             return;
         }
         
-        this.historyList.innerHTML = this.answerHistory.map(item => `
-            <li class="history-item">
+        this.historyList.innerHTML = this.answerHistory.map((item, index) => `
+            <li class="history-item" data-index="${index}">
                 <div class="history-answer">${item.answer}</div>
                 <div class="history-time">${item.timestamp}</div>
             </li>
         `).join('');
     }
 
-    clearHistory() {
-        if (confirm('确定要清空所有历史记录吗？')) {
-            this.answerHistory = [];
-            this.saveHistory();
-            this.renderHistory();
+    updateHistoryCount() {
+        if (this.historyCount) {
+            this.historyCount.textContent = this.answerHistory.length;
         }
     }
 
-    toggleHistory() {
-        this.isHistoryOpen = !this.isHistoryOpen;
+    clearHistory() {
+        if (confirm('确定要清空所有答案回忆吗？')) {
+            this.answerHistory = [];
+            this.saveHistory();
+            this.renderHistory();
+            this.updateHistoryCount();
+        }
+    }
+
+    toggleHistoryExpansion() {
+        this.isHistoryExpanded = !this.isHistoryExpanded;
         
-        if (this.isHistoryOpen) {
-            this.historySidebar.classList.add('open');
-            this.historyToggle.style.transform = 'rotate(180deg)';
+        const toggleIcon = document.querySelector('.history-toggle-icon');
+        const listContainer = this.historyListContainer;
+        
+        if (this.isHistoryExpanded) {
+            listContainer.classList.add('expanded');
+            if (toggleIcon) {
+                toggleIcon.classList.add('expanded');
+            }
         } else {
-            this.historySidebar.classList.remove('open');
-            this.historyToggle.style.transform = 'rotate(0deg)';
+            listContainer.classList.remove('expanded');
+            if (toggleIcon) {
+                toggleIcon.classList.remove('expanded');
+            }
         }
     }
 }
