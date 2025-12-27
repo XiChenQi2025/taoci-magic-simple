@@ -3,17 +3,17 @@ class App {
     constructor() {
         // 更新模块名称，使其更贴合网站设计理念
         this.routes = [
-            { path: '/home', name: '精灵圣殿', module: 'home', navColor: 'var(--barbie-pink)', emoji: '🏰' },
-            { path: '/games', name: '幻游玩界', module: 'games', navColor: 'var(--neon-blue)', emoji: '🎮' },
-            { path: '/answer-book', name: '魔法秘典', module: 'answer-book', navColor: 'var(--neon-purple)', emoji: '📚' },
-            { path: '/fortune', name: '命运轮盘', module: 'fortune', navColor: 'var(--neon-yellow)', emoji: '🎡' },
-            { path: '/message-board', name: '契约之声', module: 'message-board', navColor: 'var(--neon-orange)', emoji: '💌' }
+            { path: '/', name: '精灵圣殿', module: 'home', navColor: 'var(--primary)', emoji: '🏰' },
+            { path: '/games', name: '幻游玩界', module: 'games', navColor: 'var(--blue)', emoji: '🎮' },
+            { path: '/answer-book', name: '魔法秘典', module: 'answer-book', navColor: 'var(--purple)', emoji: '📚' },
+            { path: '/fortune', name: '命运轮盘', module: 'fortune', navColor: 'var(--yellow)', emoji: '🎡' },
+            { path: '/message-board', name: '契约之声', module: 'message-board', navColor: 'var(--orange)', emoji: '💌' }
         ];
         
         this.currentModule = null;
         this.state = {
             userNickname: null,
-            theme: 'dark'
+            theme: 'light'
         };
         
         this.init();
@@ -98,7 +98,7 @@ class App {
         // 清理当前模块
         if (this.currentModule) {
             try {
-                this.currentModule.destroy();
+                await this.currentModule.destroy();
             } catch (error) {
                 console.error('清理模块失败:', error);
             }
