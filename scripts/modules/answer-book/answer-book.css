@@ -86,100 +86,89 @@
     margin: 0 auto;
 }
 
-/* 云朵背景容器 - 修改为背景层 */
+/* 云朵背景容器 - 使用纯CSS绘制自然云朵 */
 .cloud-bg {
-    width: 300px;
+    width: 320px;
     height: 200px;
     position: relative;
     margin: 1.5rem auto;
-    z-index: 5; /* 降低层级作为背景 */
-    pointer-events: none; /* 不接收点击事件 */
+    z-index: 5;
+    pointer-events: none;
 }
 
-/* 自然云朵设计 - 使用多个圆形叠加 */
+/* 自然云朵设计 - 使用box-shadow创建多个圆形叠加 */
 .cloud {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-    box-shadow: 
-        0 10px 25px rgba(244, 143, 177, 0.1),
-        inset 0 0 20px rgba(255, 255, 255, 0.8);
-    overflow: hidden;
-    border: 1px solid rgba(244, 143, 177, 0.1);
-    animation: cloud-float 4s ease-in-out infinite alternate;
-}
-
-/* 云朵的细节圆形 */
-.cloud::before,
-.cloud::after,
-.cloud-detail {
-    content: '';
-    position: absolute;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.9);
-}
-
-.cloud::before {
-    width: 80px;
+    width: 180px;
     height: 80px;
-    top: -25px;
-    left: 40px;
-}
-
-.cloud::after {
-    width: 70px;
-    height: 70px;
-    top: -20px;
-    right: 50px;
-}
-
-.cloud-detail {
-    width: 60px;
-    height: 60px;
-    top: -15px;
-    left: 100px;
-}
-
-.cloud-detail:nth-child(2) {
-    width: 50px;
-    height: 50px;
-    top: 10px;
-    right: 30px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 
+        /* 主云朵 */
+        0 0 0 20px rgba(255, 255, 255, 0.85),
+        /* 左侧小云朵 */
+        -50px -20px 0 25px rgba(255, 255, 255, 0.85),
+        /* 右侧小云朵 */
+        50px -25px 0 30px rgba(255, 255, 255, 0.85),
+        /* 左上云朵 */
+        -70px 0 0 20px rgba(255, 255, 255, 0.85),
+        /* 右上云朵 */
+        70px -10px 0 25px rgba(255, 255, 255, 0.85),
+        /* 左下云朵 */
+        -30px 20px 0 15px rgba(255, 255, 255, 0.85),
+        /* 右下云朵 */
+        40px 15px 0 20px rgba(255, 255, 255, 0.85),
+        /* 外发光 */
+        0 0 40px rgba(244, 143, 177, 0.15),
+        inset 0 0 30px rgba(255, 255, 255, 0.9);
+    filter: drop-shadow(0 5px 15px rgba(244, 143, 177, 0.1));
+    animation: cloud-float 4s ease-in-out infinite alternate;
 }
 
 @keyframes cloud-float {
     0% { 
-        transform: translateY(0px) scale(1);
-        filter: drop-shadow(0 5px 10px rgba(244, 143, 177, 0.1));
+        transform: translate(-50%, -50%);
     }
     100% { 
-        transform: translateY(-10px) scale(1.02);
-        filter: drop-shadow(0 8px 15px rgba(244, 143, 177, 0.15));
+        transform: translate(-50%, calc(-50% - 10px));
     }
 }
 
 .cloud.thinking {
-    animation: cloud-pulse 2s ease-in-out infinite;
+    animation: cloud-pulse 2s ease-in-out infinite, cloud-float 4s ease-in-out infinite alternate;
 }
 
 @keyframes cloud-pulse {
-    0% { 
-        opacity: 0.8;
-        transform: translateY(0px) scale(1);
-        background: rgba(255, 255, 255, 0.7);
+    0%, 100% { 
+        opacity: 0.9;
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: 
+            0 0 0 20px rgba(255, 255, 255, 0.85),
+            -50px -20px 0 25px rgba(255, 255, 255, 0.85),
+            50px -25px 0 30px rgba(255, 255, 255, 0.85),
+            -70px 0 0 20px rgba(255, 255, 255, 0.85),
+            70px -10px 0 25px rgba(255, 255, 255, 0.85),
+            -30px 20px 0 15px rgba(255, 255, 255, 0.85),
+            40px 15px 0 20px rgba(255, 255, 255, 0.85),
+            0 0 40px rgba(244, 143, 177, 0.15),
+            inset 0 0 30px rgba(255, 255, 255, 0.9);
     }
     50% { 
         opacity: 1;
-        transform: translateY(-5px) scale(1.03);
-        background: rgba(255, 255, 255, 0.8);
-    }
-    100% { 
-        opacity: 0.8;
-        transform: translateY(0px) scale(1);
-        background: rgba(255, 255, 255, 0.7);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 
+            0 0 0 20px rgba(255, 255, 255, 0.9),
+            -50px -20px 0 25px rgba(255, 255, 255, 0.9),
+            50px -25px 0 30px rgba(255, 255, 255, 0.9),
+            -70px 0 0 20px rgba(255, 255, 255, 0.9),
+            70px -10px 0 25px rgba(255, 255, 255, 0.9),
+            -30px 20px 0 15px rgba(255, 255, 255, 0.9),
+            40px 15px 0 20px rgba(255, 255, 255, 0.9),
+            0 0 50px rgba(244, 143, 177, 0.2),
+            inset 0 0 40px rgba(255, 255, 255, 0.95);
     }
 }
 
@@ -189,8 +178,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 260px;
-    height: 160px;
+    width: 280px;
+    height: 150px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -215,12 +204,16 @@
     max-width: 100%;
     word-wrap: break-word;
     position: relative;
-    padding: 1rem;
+    padding: 1rem 1.2rem;
     text-align: center;
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-    backdrop-filter: blur(3px);
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+    box-shadow: 
+        0 8px 25px rgba(244, 143, 177, 0.15),
+        inset 0 0 20px rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(244, 143, 177, 0.1);
 }
 
 .answer-text .char {
@@ -401,35 +394,33 @@
     50% { opacity: 1; }
 }
 
-/* 历史记录 - 使用手风琴样式 */
-.history-accordion {
+/* 历史记录 - 使用标签页式折叠框 */
+.history-section {
     margin-top: 2.5rem;
     width: 100%;
     max-width: 600px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(244, 143, 177, 0.1);
-    border: 1px solid rgba(244, 143, 177, 0.2);
     z-index: 10;
 }
 
-.accordion-header {
+.history-tab {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px 12px 0 0;
+    border: 1px solid rgba(244, 143, 177, 0.2);
+    border-bottom: none;
+    padding: 1rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: rgba(255, 255, 255, 0.95);
     cursor: pointer;
     transition: all 0.3s ease;
     user-select: none;
 }
 
-.accordion-header:hover {
-    background: rgba(255, 255, 255, 0.98);
+.history-tab:hover {
+    background: rgba(255, 255, 255, 0.95);
 }
 
-.accordion-title {
+.history-tab-title {
     font-size: 1.2rem;
     margin: 0;
     font-weight: 600;
@@ -439,18 +430,18 @@
     gap: 0.5rem;
 }
 
-.accordion-icon {
+.history-tab-icon {
     font-size: 1.1rem;
     color: #F48FB1;
     transition: transform 0.3s ease;
     font-weight: bold;
 }
 
-.accordion-icon.expanded {
+.history-tab-icon.expanded {
     transform: rotate(180deg);
 }
 
-.accordion-count {
+.history-count {
     font-size: 0.8rem;
     background: rgba(244, 143, 177, 0.1);
     padding: 0.2rem 0.6rem;
@@ -459,14 +450,18 @@
     color: #666;
 }
 
-.accordion-content {
+.history-content {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(244, 143, 177, 0.2);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 5px 15px rgba(244, 143, 177, 0.1);
 }
 
-.accordion-content.expanded {
+.history-content.expanded {
     max-height: 300px;
 }
 
@@ -574,46 +569,33 @@
     }
     
     .cloud-bg {
-        width: 250px;
-        height: 170px;
+        width: 280px;
+        height: 180px;
+    }
+    
+    .cloud {
+        width: 160px;
+        height: 70px;
+        box-shadow: 
+            0 0 0 18px rgba(255, 255, 255, 0.85),
+            -45px -18px 0 22px rgba(255, 255, 255, 0.85),
+            45px -22px 0 26px rgba(255, 255, 255, 0.85),
+            -65px 0 0 18px rgba(255, 255, 255, 0.85),
+            65px -8px 0 22px rgba(255, 255, 255, 0.85),
+            -25px 18px 0 13px rgba(255, 255, 255, 0.85),
+            35px 13px 0 18px rgba(255, 255, 255, 0.85),
+            0 0 35px rgba(244, 143, 177, 0.15),
+            inset 0 0 25px rgba(255, 255, 255, 0.9);
     }
     
     .answer-display {
-        width: 220px;
-        height: 140px;
+        width: 250px;
+        height: 135px;
     }
     
     .answer-text {
         font-size: 1.3rem;
-        padding: 0.8rem;
-    }
-    
-    .cloud::before {
-        width: 70px;
-        height: 70px;
-        top: -20px;
-        left: 30px;
-    }
-    
-    .cloud::after {
-        width: 60px;
-        height: 60px;
-        top: -15px;
-        right: 40px;
-    }
-    
-    .cloud-detail {
-        width: 50px;
-        height: 50px;
-        top: -10px;
-        left: 80px;
-    }
-    
-    .cloud-detail:nth-child(2) {
-        width: 40px;
-        height: 40px;
-        top: 15px;
-        right: 25px;
+        padding: 0.8rem 1rem;
     }
     
     .ask-button {
@@ -626,12 +608,12 @@
         padding: 0 0.5rem;
     }
     
-    .history-accordion {
+    .history-section {
         margin-top: 2rem;
         max-width: 100%;
     }
     
-    .accordion-title {
+    .history-tab-title {
         font-size: 1.1rem;
     }
     
@@ -642,49 +624,37 @@
 
 @media (max-width: 480px) {
     .cloud-bg {
-        width: 220px;
-        height: 150px;
+        width: 250px;
+        height: 160px;
+    }
+    
+    .cloud {
+        width: 140px;
+        height: 60px;
+        box-shadow: 
+            0 0 0 15px rgba(255, 255, 255, 0.85),
+            -40px -15px 0 20px rgba(255, 255, 255, 0.85),
+            40px -20px 0 23px rgba(255, 255, 255, 0.85),
+            -60px 0 0 15px rgba(255, 255, 255, 0.85),
+            60px -5px 0 20px rgba(255, 255, 255, 0.85),
+            -20px 15px 0 12px rgba(255, 255, 255, 0.85),
+            30px 10px 0 15px rgba(255, 255, 255, 0.85),
+            0 0 30px rgba(244, 143, 177, 0.15),
+            inset 0 0 20px rgba(255, 255, 255, 0.9);
     }
     
     .answer-display {
-        width: 190px;
+        width: 220px;
         height: 120px;
     }
     
     .answer-text {
         font-size: 1.2rem;
+        padding: 0.7rem 0.9rem;
     }
     
     .book-title {
         font-size: 1.8rem;
-    }
-    
-    .cloud::before {
-        width: 60px;
-        height: 60px;
-        top: -15px;
-        left: 25px;
-    }
-    
-    .cloud::after {
-        width: 50px;
-        height: 50px;
-        top: -10px;
-        right: 30px;
-    }
-    
-    .cloud-detail {
-        width: 45px;
-        height: 45px;
-        top: -8px;
-        left: 70px;
-    }
-    
-    .cloud-detail:nth-child(2) {
-        width: 35px;
-        height: 35px;
-        top: 20px;
-        right: 20px;
     }
     
     .ask-button {
@@ -692,29 +662,11 @@
         height: 75px;
     }
     
-    .accordion-header {
+    .history-tab {
         padding: 0.8rem 1rem;
     }
     
     .history-item {
         padding: 0.7rem 1rem;
-    }
-}
-
-/* 防止云朵在极端小屏幕上变形 */
-@media (max-width: 360px) {
-    .cloud-bg {
-        width: 200px;
-        height: 140px;
-    }
-    
-    .answer-display {
-        width: 180px;
-        height: 110px;
-    }
-    
-    .answer-text {
-        font-size: 1.1rem;
-        padding: 0.6rem;
     }
 }

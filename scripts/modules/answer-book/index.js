@@ -7,11 +7,11 @@ export default class AnswerBookModule {
         this.state = 'IDLE'; // IDLE, THINKING, REVEALING, SHOWING
         this.currentAnswer = '';
         this.answerHistory = [];
-        this.isAccordionExpanded = false; // 改为手风琴状态
+        this.isHistoryExpanded = false;
         
         // 绑定方法
         this.handleAskClick = this.handleAskClick.bind(this);
-        this.toggleAccordion = this.toggleAccordion.bind(this); // 改为手风琴方法
+        this.toggleHistory = this.toggleHistory.bind(this);
         this.clearHistory = this.clearHistory.bind(this);
     }
 
@@ -47,12 +47,12 @@ export default class AnswerBookModule {
         // 清理事件监听
         const cloudBg = document.querySelector('.cloud-bg');
         const askButton = document.querySelector('.ask-button');
-        const accordionHeader = document.querySelector('.accordion-header');
+        const historyTab = document.querySelector('.history-tab');
         const clearHistoryBtn = document.querySelector('.clear-history-btn');
         
         if (cloudBg) cloudBg.removeEventListener('click', this.handleAskClick);
         if (askButton) askButton.removeEventListener('click', this.handleAskClick);
-        if (accordionHeader) accordionHeader.removeEventListener('click', this.toggleAccordion);
+        if (historyTab) historyTab.removeEventListener('click', this.toggleHistory);
         if (clearHistoryBtn) clearHistoryBtn.removeEventListener('click', this.clearHistory);
         
         // 清理样式
@@ -84,25 +84,36 @@ export default class AnswerBookModule {
                 text-align: center;
             }
             .cloud-bg {
-                width: 300px;
+                width: 320px;
                 height: 200px;
                 margin: 1.5rem auto;
                 position: relative;
             }
             .cloud {
                 position: absolute;
-                width: 100%;
-                height: 100%;
+                width: 180px;
+                height: 80px;
                 background: white;
                 border-radius: 50%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                box-shadow: 
+                    0 0 0 20px white,
+                    -50px -20px 0 25px white,
+                    50px -25px 0 30px white,
+                    -70px 0 0 20px white,
+                    70px -10px 0 25px white,
+                    -30px 20px 0 15px white,
+                    40px 15px 0 20px white;
             }
             .answer-display {
                 position: absolute;
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                width: 260px;
-                height: 160px;
+                width: 280px;
+                height: 150px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -112,6 +123,9 @@ export default class AnswerBookModule {
                 font-size: 1.5rem;
                 color: #333;
                 font-family: 'Georgia', serif;
+                background: white;
+                padding: 1rem;
+                border-radius: 10px;
             }
             .ask-button {
                 width: 85px;
@@ -137,11 +151,7 @@ export default class AnswerBookModule {
                 
                 <!-- 云朵背景容器 -->
                 <div class="cloud-bg" id="cloud-bg">
-                    <div class="cloud" id="cloud">
-                        <!-- 云朵细节 -->
-                        <div class="cloud-detail"></div>
-                        <div class="cloud-detail"></div>
-                    </div>
+                    <div class="cloud" id="cloud"></div>
                     
                     <!-- 答案显示区域 -->
                     <div class="answer-display" id="answer-display">
@@ -169,17 +179,17 @@ export default class AnswerBookModule {
                     </div>
                 </div>
                 
-                <!-- 历史记录手风琴 -->
-                <div class="history-accordion" id="history-accordion">
-                    <div class="accordion-header">
+                <!-- 历史记录区域 -->
+                <div class="history-section" id="history-section">
+                    <div class="history-tab">
                         <div style="display: flex; align-items: center;">
-                            <h3 class="accordion-title">历史答案</h3>
-                            <span class="accordion-count" id="accordion-count">0</span>
+                            <h3 class="history-tab-title">历史答案</h3>
+                            <span class="history-count" id="history-count">0</span>
                         </div>
-                        <div class="accordion-icon">▼</div>
+                        <div class="history-tab-icon">▼</div>
                     </div>
                     
-                    <div class="accordion-content" id="accordion-content">
+                    <div class="history-content" id="history-content">
                         <ul class="history-list" id="history-list"></ul>
                         <button class="clear-history-btn" id="clear-history-btn">清空历史</button>
                     </div>
@@ -194,11 +204,11 @@ export default class AnswerBookModule {
         this.answerText = container.querySelector('#answer-text');
         this.statusIndicator = container.querySelector('#status-indicator');
         this.askButton = container.querySelector('#ask-button');
-        this.historyAccordion = container.querySelector('#history-accordion');
+        this.historySection = container.querySelector('#history-section');
         this.historyList = container.querySelector('#history-list');
-        this.accordionContent = container.querySelector('#accordion-content');
-        this.accordionHeader = container.querySelector('.accordion-header');
-        this.accordionCount = document.querySelector('#accordion-count');
+        this.historyContent = container.querySelector('#history-content');
+        this.historyTab = container.querySelector('.history-tab');
+        this.historyCount = document.querySelector('#history-count');
         this.clearHistoryBtn = document.querySelector('#clear-history-btn');
     }
 
@@ -431,9 +441,9 @@ export default class AnswerBookModule {
             this.askButton.addEventListener('click', this.handleAskClick);
         }
         
-        // 手风琴展开/收起
-        if (this.accordionHeader) {
-            this.accordionHeader.addEventListener('click', this.toggleAccordion);
+        // 历史记录标签页点击事件
+        if (this.historyTab) {
+            this.historyTab.addEventListener('click', this.toggleHistory);
         }
         
         // 清空历史记录
@@ -517,8 +527,8 @@ export default class AnswerBookModule {
         this.updateHistoryCount();
         
         // 如果历史记录是收起的，自动展开
-        if (!this.isAccordionExpanded) {
-            this.toggleAccordion();
+        if (!this.isHistoryExpanded) {
+            this.toggleHistory();
         }
     }
 
@@ -543,8 +553,8 @@ export default class AnswerBookModule {
     }
 
     updateHistoryCount() {
-        if (this.accordionCount) {
-            this.accordionCount.textContent = this.answerHistory.length;
+        if (this.historyCount) {
+            this.historyCount.textContent = this.answerHistory.length;
         }
     }
 
@@ -557,21 +567,21 @@ export default class AnswerBookModule {
         }
     }
 
-    toggleAccordion() {
-        this.isAccordionExpanded = !this.isAccordionExpanded;
+    toggleHistory() {
+        this.isHistoryExpanded = !this.isHistoryExpanded;
         
-        const accordionIcon = document.querySelector('.accordion-icon');
-        const accordionContent = this.accordionContent;
+        const historyTabIcon = document.querySelector('.history-tab-icon');
+        const historyContent = this.historyContent;
         
-        if (this.isAccordionExpanded) {
-            accordionContent.classList.add('expanded');
-            if (accordionIcon) {
-                accordionIcon.classList.add('expanded');
+        if (this.isHistoryExpanded) {
+            historyContent.classList.add('expanded');
+            if (historyTabIcon) {
+                historyTabIcon.classList.add('expanded');
             }
         } else {
-            accordionContent.classList.remove('expanded');
-            if (accordionIcon) {
-                accordionIcon.classList.remove('expanded');
+            historyContent.classList.remove('expanded');
+            if (historyTabIcon) {
+                historyTabIcon.classList.remove('expanded');
             }
         }
     }
