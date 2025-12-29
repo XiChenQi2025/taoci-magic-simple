@@ -39,14 +39,6 @@ export default {
         }
     ],
     
-    // 默认图片
-    defaultImage: {
-        url: '../../../assets/home/default-character.png',
-        alt: '桃汽水-默认形象',
-        credit: '系统默认',
-        description: '欢迎来到魔力补给站！'
-    },
-    
     // 日常公告配置
     announcements: [
         {

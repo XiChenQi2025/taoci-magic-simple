@@ -121,7 +121,7 @@ export default class HomeModule {
                 <!-- 皮套图展示区 -->
                 <section class="character-section">
                     <div class="character-container">
-                        <img id="character-image" src="" alt="" class="character-image">
+                        <img id="character-image" src="" alt="" class="character-image loading">
                         <div id="image-info" class="image-info">
                             <span class="image-credit"></span>
                             <span class="image-description"></span>
@@ -218,8 +218,8 @@ export default class HomeModule {
             
             img.onerror = () => {
                 console.error('图片加载失败:', selectedImage.url);
-                // 加载失败，使用默认图片
-                this.loadDefaultImage(imageElement, imageCredit, imageDescription);
+                // 加载失败，显示错误状态
+                this.showImageError(imageElement, imageCredit, imageDescription);
                 resolve(false);
             };
             
@@ -227,40 +227,15 @@ export default class HomeModule {
         });
     }
     
-    loadDefaultImage(imageElement, imageCredit, imageDescription) {
-        const defaultImage = this.config.defaultImage;
+    showImageError(imageElement, imageCredit, imageDescription) {
+        imageElement.classList.remove('loading');
+        imageElement.classList.add('error');
         
-        const img = new Image();
-        img.onload = () => {
-            imageElement.src = defaultImage.url;
-            imageElement.alt = defaultImage.alt;
-            imageElement.classList.remove('loading');
-            
-            if (imageCredit) imageCredit.textContent = defaultImage.credit;
-            if (imageDescription) imageDescription.textContent = defaultImage.description;
-            
-            imageElement.style.opacity = 0;
-            requestAnimationFrame(() => {
-                imageElement.style.transition = 'opacity 0.8s ease';
-                imageElement.style.opacity = 1;
-            });
-        };
+        // 显示错误信息
+        if (imageCredit) imageCredit.textContent = '图片加载失败';
+        if (imageDescription) imageDescription.textContent = '请刷新页面重试';
         
-        img.onerror = () => {
-            // 如果默认图片也加载失败，使用纯色背景
-            console.error('默认图片也加载失败，使用纯色背景');
-            imageElement.style.backgroundColor = 'var(--primary-light)';
-            imageElement.style.display = 'flex';
-            imageElement.style.alignItems = 'center';
-            imageElement.style.justifyContent = 'center';
-            imageElement.innerHTML = '<span style="color: white; font-size: 1.2rem;">🍑 桃汽水</span>';
-            imageElement.classList.remove('loading');
-            
-            if (imageCredit) imageCredit.textContent = '图片加载失败';
-            if (imageDescription) imageDescription.textContent = '显示默认形象';
-        };
-        
-        img.src = defaultImage.url;
+        console.log('图片加载失败，显示错误状态');
     }
     
     // ==================== 公告板系统 ====================
