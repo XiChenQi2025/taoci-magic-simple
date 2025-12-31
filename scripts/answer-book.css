@@ -1,0 +1,742 @@
+/* 答案之书 v2.0 - 简约高级主题重构版 */
+
+/* 使用主骨架的CSS变量 */
+:root {
+    /* 答案之书专用主题色 - 基于主骨架变量 */
+    --answer-primary: var(--purple);
+    --answer-primary-light: rgba(206, 147, 216, 0.15);
+    --answer-primary-dark: var(--primary-dark);
+    
+    --answer-accent: var(--secondary);
+    --answer-highlight: var(--highlight);
+    
+    /* 霓虹效果 - 柔和版 */
+    --answer-glow: 0 0 20px rgba(206, 147, 216, 0.25);
+    --answer-glow-intense: 0 0 30px rgba(206, 147, 216, 0.4);
+    
+    /* 边框增强 */
+    --answer-border: 3px solid rgba(255, 255, 255, 0.95);
+    --answer-border-light: 2px solid rgba(255, 255, 255, 0.9);
+}
+
+/* 容器样式 - 与主骨架统一 */
+.answer-book-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+    min-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    z-index: 1;
+    animation: fade-in 0.6s ease-out;
+    text-align: center; /* 添加：全局文本居中 */
+}
+
+/* 简约背景效果 */
+.answer-book-container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: 
+        radial-gradient(circle at 15% 20%, rgba(206, 147, 216, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(244, 143, 177, 0.03) 0%, transparent 40%);
+    animation: floating-bg 20s infinite alternate ease-in-out;
+}
+
+/* 标题区域 - 简约高级风格 */
+.book-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    width: 100%;
+    padding: 0 1rem;
+}
+
+.book-title {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    background: linear-gradient(135deg, var(--answer-primary), var(--answer-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: inline-block;
+    padding-bottom: 10px;
+    width: 100%; /* 确保居中 */
+}
+
+.book-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    width: 50%;
+    height: 3px;
+    background: linear-gradient(135deg, var(--answer-primary), var(--answer-accent));
+    border-radius: 2px;
+    opacity: 0.8;
+}
+
+.book-subtitle {
+    font-size: 1.1rem;
+    color: #757575;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+    max-width: 600px;
+    margin: 0 auto 1rem;
+    text-align: center; /* 确保居中 */
+}
+
+.book-disclaimer {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #9E9E9E;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    border: var(--answer-border-light);
+    display: inline-block;
+    box-shadow: var(--shadow-sm);
+    text-align: center; /* 确保居中 */
+}
+
+/* 书本容器 - 简约卡片设计 */
+.book-container {
+    width: 500px;
+    height: 320px;
+    margin: 1.5rem auto;
+    position: relative;
+    z-index: 10;
+    perspective: 1000px;
+}
+
+.book {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.book:hover {
+    transform: translateY(-5px);
+}
+
+.book-pages {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    border: var(--answer-border);
+    box-shadow: 
+        var(--shadow-xl),
+        0 0 25px rgba(206, 147, 216, 0.15),
+        0 0 0 2px rgba(255, 255, 255, 0.9) inset;
+    overflow: hidden;
+}
+
+.book-pages::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(135deg, var(--answer-primary), var(--answer-accent));
+    border-radius: 20px 20px 0 0;
+}
+
+/* 答案显示区域 - 磨砂玻璃效果 */
+.answer-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85%;
+    height: 65%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: var(--answer-border-light);
+    box-shadow: 
+        var(--shadow-lg),
+        0 0 0 2px rgba(255, 255, 255, 0.9) inset;
+    z-index: 20;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.answer-display.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.02);
+    box-shadow: 
+        var(--shadow-xl),
+        0 0 30px rgba(206, 147, 216, 0.2),
+        0 0 0 3px rgba(255, 255, 255, 0.95) inset;
+}
+
+.answer-text {
+    font-size: 1.8rem;
+    line-height: 1.5;
+    color: #424242;
+    font-family: var(--font-family);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    max-width: 100%;
+    word-wrap: break-word;
+    text-align: center;
+    position: relative;
+    width: 100%; /* 确保居中 */
+}
+
+.answer-text .char {
+    opacity: 0;
+    display: inline-block;
+    animation: char-reveal 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes char-reveal {
+    0% { 
+        opacity: 0;
+        transform: translateY(10px);
+        color: var(--answer-primary);
+    }
+    100% { 
+        opacity: 1;
+        transform: translateY(0);
+        color: #424242;
+    }
+}
+
+.answer-text.waiting::before {
+    content: '魔法书正在翻阅中...';
+    color: var(--answer-primary);
+    font-size: 1.5rem;
+    animation: waiting-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes waiting-pulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+/* 状态提示 - 与主骨架统一 */
+.status-indicator {
+    margin: 1.5rem auto;
+    padding: 1rem 2rem;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 14px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #616161;
+    text-align: center;
+    border: var(--answer-border-light);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    width: 90%;
+    max-width: 500px;
+}
+
+.status-indicator.thinking {
+    background: linear-gradient(135deg, rgba(144, 202, 249, 0.15), rgba(144, 202, 249, 0.25));
+    border: 2px solid rgba(144, 202, 249, 0.3);
+    color: #1565C0;
+    animation: soft-glow 2s ease-in-out infinite;
+}
+
+/* 控制按钮 - 使用主骨架按钮样式 */
+.book-controls {
+    margin: 1.5rem auto;
+    text-align: center;
+    z-index: 10;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* 修改：获取答案按钮改为长方形圆角按钮，圆角大一些 */
+.ask-button {
+    width: 180px; /* 改为长方形宽度 */
+    height: 60px; /* 改为长方形高度 */
+    border-radius: 40px; /* 加大圆角，接近两边半圆 */
+    padding: 0;
+    border: var(--answer-border);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--answer-primary), var(--answer-primary-dark));
+    box-shadow: 
+        var(--shadow-lg),
+        0 0 0 3px rgba(255, 255, 255, 0.9) inset;
+    animation: soft-glow 3s ease-in-out infinite;
+    overflow: hidden;
+}
+
+.ask-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.2), 
+        transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.ask-button:hover:not(:disabled)::after {
+    transform: translateX(100%);
+}
+
+.ask-button:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 
+        var(--shadow-xl),
+        0 0 0 3px rgba(255, 255, 255, 0.95) inset,
+        var(--answer-glow-intense);
+    animation: none;
+}
+
+.ask-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    animation: none;
+}
+
+.ask-button .button-text {
+    font-size: 1.1rem; /* 稍微增大字体 */
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1;
+}
+
+.ask-button .button-loader {
+    display: none;
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.ask-button.loading .button-text {
+    display: none;
+}
+
+.ask-button.loading .button-loader {
+    display: block;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.action-tip {
+    font-size: 0.95rem;
+    text-align: center;
+    color: #9E9E9E;
+    font-style: italic;
+    opacity: 0.9;
+}
+
+/* 历史记录区域 - 简约卡片设计 */
+.history-section {
+    margin: 2rem auto 0;
+    width: 100%;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 18px;
+    border: var(--answer-border);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    text-align: center; /* 添加：历史记录区域文本居中 */
+}
+
+.history-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, var(--answer-primary), var(--answer-accent));
+    border-radius: 18px 18px 0 0;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.history-header:hover {
+    background: rgba(255, 255, 255, 0.98);
+}
+
+.history-title {
+    font-size: 1.3rem;
+    margin: 0;
+    font-weight: 600;
+    color: #424242;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.history-title::before {
+    content: '📚';
+    font-size: 1.2rem;
+}
+
+.history-toggle-icon {
+    font-size: 1.2rem;
+    color: var(--answer-primary);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: bold;
+    transform: rotate(0deg);
+}
+
+.history-toggle-icon.expanded {
+    transform: rotate(180deg);
+}
+
+.history-count {
+    font-size: 0.9rem;
+    background: var(--answer-primary-light);
+    color: var(--answer-primary);
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    border: 1px solid rgba(206, 147, 216, 0.3);
+}
+
+.history-list-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+}
+
+.history-list-container.expanded {
+    max-height: 400px;
+    opacity: 1;
+    overflow-y: auto;
+}
+
+.history-list {
+    list-style: none;
+    padding: 0.5rem 0;
+    margin: 0;
+}
+
+.history-item {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-item:hover {
+    background: rgba(206, 147, 216, 0.05);
+}
+
+.history-answer {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.4;
+    flex: 1;
+    padding-right: 1rem;
+    color: #424242;
+    text-align: left; /* 历史答案文本保持左对齐 */
+}
+
+.history-time {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    color: #757575;
+    white-space: nowrap;
+    font-style: italic;
+    min-width: 70px;
+    text-align: right;
+}
+
+.no-history {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    opacity: 0.7;
+    font-style: italic;
+    color: #9E9E9E;
+}
+
+.clear-history-btn {
+    margin: 1rem auto 1.5rem;
+    padding: 0.8rem 1.8rem;
+    background: linear-gradient(135deg, rgba(244, 143, 177, 0.1), rgba(244, 143, 177, 0.2));
+    color: #C2185B;
+    border: 2px solid rgba(244, 143, 177, 0.3);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+    width: calc(100% - 3rem);
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    backdrop-filter: blur(5px);
+    text-align: center; /* 确保按钮文本居中 */
+}
+
+.clear-history-btn:hover {
+    background: linear-gradient(135deg, rgba(244, 143, 177, 0.15), rgba(244, 143, 177, 0.25));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* 粒子效果优化 */
+.particle-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.star-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(206, 147, 216, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(206, 147, 216, 0.6);
+    opacity: 0;
+}
+
+/* 背景光效优化 */
+.background-glow {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(
+        circle at center,
+        rgba(206, 147, 216, 0.05) 0%,
+        rgba(206, 147, 216, 0.02) 50%,
+        transparent 70%
+    );
+    z-index: 1;
+    transition: all 0.8s ease;
+    pointer-events: none;
+}
+
+.background-glow.intense {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(
+        circle at center,
+        rgba(206, 147, 216, 0.1) 0%,
+        rgba(206, 147, 216, 0.05) 50%,
+        transparent 70%
+    );
+}
+
+/* 滚动条样式统一 */
+.history-list-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.history-list-container::-webkit-scrollbar-track {
+    background: rgba(206, 147, 216, 0.05);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.history-list-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--answer-primary), var(--answer-accent));
+    border-radius: 4px;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    background-clip: padding-box;
+}
+
+.history-list-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--answer-primary-dark), #BA68C8);
+}
+
+/* 响应式设计 - 重点调整卡片响应式 */
+@media (max-width: 768px) {
+    .answer-book-container {
+        padding: 1.8rem 1rem;
+    }
+    
+    .book-title {
+        font-size: 2.2rem;
+    }
+    
+    .book-subtitle {
+        font-size: 1rem;
+        padding: 0 0.5rem;
+    }
+    
+    /* 修改：在小屏幕设备上保持卡片比例，不拉伸 */
+    .book-container {
+        width: 90%;
+        max-width: 450px;
+        height: 280px; /* 固定高度，不拉伸 */
+        margin: 1rem auto;
+        /* 添加纵横比保持 */
+        aspect-ratio: 5/3.2; /* 500/320 ≈ 1.5625 */
+    }
+    
+    .answer-text {
+        font-size: 1.6rem;
+        padding: 0.5rem;
+    }
+    
+    /* 修改：响应式按钮调整 */
+    .ask-button {
+        width: 160px; /* 响应式调整宽度 */
+        height: 55px; /* 响应式调整高度 */
+        border-radius: 35px; /* 保持大圆角 */
+    }
+    
+    .ask-button .button-text {
+        font-size: 1rem; /* 响应式字体调整 */
+    }
+    
+    .history-section {
+        margin-top: 1.5rem;
+        max-width: 100%;
+    }
+    
+    .history-title {
+        font-size: 1.2rem;
+    }
+    
+    .history-answer {
+        font-size: 0.95rem;
+    }
+    
+    .history-time {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* 修改：在超小屏幕上进一步优化卡片 */
+    .book-container {
+        width: 95%;
+        height: 240px; /* 固定高度，不拉伸 */
+        max-width: 380px; /* 限制最大宽度 */
+        aspect-ratio: 5/3.2; /* 保持比例 */
+    }
+    
+    .answer-text {
+        font-size: 1.4rem;
+    }
+    
+    .book-title {
+        font-size: 1.9rem;
+    }
+    
+    /* 修改：超小屏幕按钮调整 */
+    .ask-button {
+        width: 140px;
+        height: 50px;
+        border-radius: 30px; /* 保持大圆角 */
+    }
+    
+    .ask-button .button-text {
+        font-size: 0.95rem;
+    }
+    
+    .history-header {
+        padding: 1rem;
+    }
+    
+    .history-item {
+        padding: 0.8rem 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+    }
+    
+    .history-time {
+        align-self: flex-end;
+        font-size: 0.75rem;
+    }
+}
+
+/* 添加：针对超小屏幕的额外优化 */
+@media (max-width: 360px) {
+    .book-container {
+        width: 95%;
+        height: 220px; /* 进一步减小高度，但保持比例 */
+        max-width: 320px;
+    }
+    
+    .answer-text {
+        font-size: 1.3rem;
+    }
+    
+    .book-title {
+        font-size: 1.7rem;
+    }
+    
+    .ask-button {
+        width: 130px;
+        height: 48px;
+        border-radius: 28px;
+    }
+}
