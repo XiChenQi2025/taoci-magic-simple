@@ -4,35 +4,35 @@ export default {
     characterImages: [
         { 
             id: 1, 
-            url: '../../../assets/home/character-1.png',  // 相对于首页模块文件的路径
+            url: '/assets/home/character-1.png',  // 相对于首页模块文件的路径
             alt: '桃汽水-日常服', 
             credit: '画师：桃桃酱',
             description: '今天也是元气满满的桃汽水哦！'
         },
         { 
             id: 2, 
-            url: '../../../assets/home/character-2.png', 
+            url: '/assets/home/character-2.png', 
             alt: '桃汽水-休闲服',
             credit: '画师：柚子茶',
             description: '休息日的放松时光～'
         },
         { 
             id: 3, 
-            url: '../../../assets/home/character-3.png', 
+            url: '/assets/home/character-3.png', 
             alt: '桃汽水-冬季服',
             credit: '画师：雪兔',
             description: '冬天也要暖暖的哦！'
         },
         { 
             id: 4, 
-            url: '../../../assets/home/character-4.png', 
+            url: '/assets/home/character-4.png', 
             alt: '桃汽水-运动装',
             credit: '画师：柠檬汽水',
             description: '一起运动吧！'
         },
         { 
             id: 5, 
-            url: '../../../assets/home/character-5.png', 
+            url: '/assets/home/character-5.png', 
             alt: '桃汽水-魔法服',
             credit: '画师：星星糖',
             description: '今天也要施展魔法哦～'

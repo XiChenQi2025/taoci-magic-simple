@@ -1,5 +1,47 @@
-// 首页模块主类 - 简化版
+// 首页模块主类 - 修复版
 import config from './home-config.js';
+
+// 图片加载工具
+class ImageLoader {
+    static async loadImage(url, alt = '', fallbackUrl = '') {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve({ success: true, img });
+            img.onerror = async () => {
+                console.warn(`图片加载失败，尝试备用URL: ${url}`);
+                if (fallbackUrl) {
+                    const backupImg = new Image();
+                    backupImg.onload = () => resolve({ success: true, img: backupImg });
+                    backupImg.onerror = () => {
+                        console.error('备用图片也加载失败:', fallbackUrl);
+                        resolve({ success: false, error: '图片加载失败' });
+                    };
+                    backupImg.src = fallbackUrl;
+                } else {
+                    resolve({ success: false, error: '图片加载失败' });
+                }
+            };
+            img.src = url;
+            img.alt = alt;
+        });
+    }
+    
+    static preloadImages(urls) {
+        return Promise.all(
+            urls.map(url => 
+                new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = resolve;
+                    img.onerror = () => {
+                        console.warn(`预加载图片失败: ${url}`);
+                        resolve(); // 即使失败也继续
+                    };
+                    img.src = url;
+                })
+            )
+        );
+    }
+}
 
 export default class HomeModule {
     constructor() {
@@ -10,17 +52,22 @@ export default class HomeModule {
         this.container = null;
         this.timers = [];
         this.eventListeners = [];
+        this.barrageAnimations = [];
         
         console.log('首页模块初始化完成');
     }
 
     async init(appContainer) {
         try {
-            // 1. 加载配置
-            await this.loadConfig();
+            console.log('开始初始化首页模块...');
             
-            // 2. 创建样式链接
-            this.loadStyles();
+            // 1. 验证配置
+            if (!this.config) {
+                throw new Error('配置加载失败');
+            }
+            
+            // 2. 预加载图片（优化体验）
+            await this.preloadImages();
             
             // 3. 渲染模块HTML结构到appContainer
             this.render(appContainer);
@@ -30,7 +77,7 @@ export default class HomeModule {
             this.initAnnouncement();
             this.initMessageWall();
             
-            // 5. 初始化弹幕效果（只在留言区域）
+            // 5. 初始化弹幕效果（只在留言区域，且非移动端）
             if (window.innerWidth >= 768) {
                 this.initMessageBarrage();
             }
@@ -52,13 +99,20 @@ export default class HomeModule {
         
         // 清理所有定时器
         this.timers.forEach(timer => {
-            clearInterval(timer);
-            clearTimeout(timer);
+            if (timer) {
+                clearInterval(timer);
+                clearTimeout(timer);
+            }
         });
         this.timers = [];
         
         // 清理弹幕动画帧
-        this.barrageAnimations?.forEach(id => cancelAnimationFrame(id));
+        if (this.barrageAnimations && this.barrageAnimations.length > 0) {
+            this.barrageAnimations.forEach(id => {
+                if (id) cancelAnimationFrame(id);
+            });
+            this.barrageAnimations = [];
+        }
         
         // 移除事件监听器
         this.eventListeners.forEach(listener => {
@@ -68,11 +122,7 @@ export default class HomeModule {
         });
         this.eventListeners = [];
         
-        // 移除样式
-        const styleLink = document.querySelector('link[href*="home-styles.css"]');
-        if (styleLink) {
-            styleLink.remove();
-        }
+        // 注意：不再在这里移除CSS，由主骨架统一管理
         
         // 清理DOM元素
         if (this.container) {
@@ -83,34 +133,22 @@ export default class HomeModule {
     }
 
     // ==================== 核心方法 ====================
-
-    async loadConfig() {
-        // 配置已通过import导入，直接使用
-        if (!this.config) {
-            throw new Error('配置加载失败');
-        }
-        
-        console.log('首页配置加载成功');
-        return this.config;
-    }
     
-    loadStyles() {
-        // 检查是否已经加载了样式
-        const existingStyle = document.querySelector('link[href*="home-styles.css"]');
-        if (existingStyle) {
+    async preloadImages() {
+        if (!this.config?.characterImages?.length) {
             return;
         }
         
-        // 创建样式链接
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = 'scripts/modules/home/home-styles.css';
-        link.id = 'home-module-styles';
+        const imageUrls = this.config.characterImages.map(img => img.url);
+        console.log('预加载图片:', imageUrls);
         
-        // 添加到head
-        document.head.appendChild(link);
-        
-        console.log('首页样式已加载');
+        try {
+            await ImageLoader.preloadImages(imageUrls);
+            console.log('图片预加载完成');
+        } catch (error) {
+            console.warn('图片预加载失败:', error);
+            // 不抛出错误，继续执行
+        }
     }
 
     render(container) {
@@ -178,6 +216,7 @@ export default class HomeModule {
         
         if (!imageElement || !this.config?.characterImages?.length) {
             console.warn('图片元素未找到或配置为空');
+            this.showDefaultImage(imageElement, imageCredit, imageDescription);
             return;
         }
         
@@ -186,6 +225,8 @@ export default class HomeModule {
         this.currentImageIndex = randomIndex;
         const selectedImage = this.config.characterImages[randomIndex];
         
+        console.log(`加载图片: ${selectedImage.url}`);
+        
         // 加载图片
         await this.loadImage(selectedImage, imageElement, imageCredit, imageDescription);
         
@@ -193,47 +234,81 @@ export default class HomeModule {
     }
     
     async loadImage(selectedImage, imageElement, imageCredit, imageDescription) {
-        const img = new Image();
+        if (!selectedImage || !selectedImage.url) {
+            console.error('图片配置无效');
+            this.showImageError(imageElement, imageCredit, imageDescription);
+            return;
+        }
         
-        return new Promise((resolve) => {
-            img.onload = () => {
-                imageElement.src = selectedImage.url;
-                imageElement.alt = selectedImage.alt;
-                imageElement.classList.remove('loading');
-                
-                // 更新图片信息
-                if (imageCredit) imageCredit.textContent = selectedImage.credit || '';
-                if (imageDescription) imageDescription.textContent = selectedImage.description || '';
-                
-                // 淡入效果
-                imageElement.style.opacity = 0;
-                requestAnimationFrame(() => {
-                    imageElement.style.transition = 'opacity 0.8s ease';
-                    imageElement.style.opacity = 1;
-                });
-                
-                console.log('图片加载成功:', selectedImage.url);
-                resolve(true);
-            };
+        // 尝试加载图片
+        const result = await ImageLoader.loadImage(
+            selectedImage.url, 
+            selectedImage.alt,
+            this.getFallbackImageUrl(selectedImage.url)
+        );
+        
+        if (result.success) {
+            // 图片加载成功
+            imageElement.src = selectedImage.url;
+            imageElement.alt = selectedImage.alt;
+            imageElement.classList.remove('loading');
+            imageElement.classList.remove('error');
             
-            img.onerror = () => {
-                console.error('图片加载失败:', selectedImage.url);
-                // 加载失败，显示错误状态
-                this.showImageError(imageElement, imageCredit, imageDescription);
-                resolve(false);
-            };
+            // 更新图片信息
+            if (imageCredit) imageCredit.textContent = selectedImage.credit || '';
+            if (imageDescription) imageDescription.textContent = selectedImage.description || '';
             
-            img.src = selectedImage.url;
-        });
+            // 淡入效果
+            imageElement.style.opacity = '0';
+            requestAnimationFrame(() => {
+                imageElement.style.transition = 'opacity 0.8s ease';
+                imageElement.style.opacity = '1';
+            });
+            
+            console.log('图片加载成功:', selectedImage.url);
+        } else {
+            // 图片加载失败
+            console.error('图片加载失败，显示错误状态');
+            this.showImageError(imageElement, imageCredit, imageDescription);
+        }
+    }
+    
+    getFallbackImageUrl(originalUrl) {
+        // 尝试不同的路径格式
+        if (originalUrl.startsWith('/assets/')) {
+            return originalUrl.substring(1); // 去掉开头的斜杠
+        } else if (originalUrl.startsWith('assets/')) {
+            return '/' + originalUrl; // 添加斜杠
+        }
+        
+        // 返回默认占位图
+        return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjQjM5REQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuaYr+WQpuWbvueJhzwvdGV4dD48L3N2Zz4=';
+    }
+    
+    showDefaultImage(imageElement, imageCredit, imageDescription) {
+        if (!imageElement) return;
+        
+        imageElement.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjQjM5REQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuaYr+WQpuWbvueJhzwvdGV4dD48L3N2Zz4=';
+        imageElement.alt = '桃汽水';
+        imageElement.classList.remove('loading');
+        
+        if (imageCredit) imageCredit.textContent = '默认图片';
+        if (imageDescription) imageDescription.textContent = '欢迎来到桃汽水の魔力补给站！';
     }
     
     showImageError(imageElement, imageCredit, imageDescription) {
+        if (!imageElement) return;
+        
         imageElement.classList.remove('loading');
         imageElement.classList.add('error');
         
         // 显示错误信息
         if (imageCredit) imageCredit.textContent = '图片加载失败';
         if (imageDescription) imageDescription.textContent = '请刷新页面重试';
+        
+        // 设置占位图
+        imageElement.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjRjQ4RkIxIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7mmK/lkKblm77niYc8L3RleHQ+PC9zdmc+';
+        imageElement.alt = '图片加载失败';
         
         console.log('图片加载失败，显示错误状态');
     }
@@ -264,6 +339,15 @@ export default class HomeModule {
         ).join('');
         
         this.currentAnnouncementIndex = 0;
+        
+        // 设置自动轮播
+        if (announcements.length > 1) {
+            const timer = setInterval(() => {
+                this.showNextAnnouncement();
+            }, 5000); // 5秒切换一次
+            
+            this.timers.push(timer);
+        }
         
         console.log('公告板初始化完成');
     }
@@ -352,6 +436,15 @@ export default class HomeModule {
         this.currentMessageIndex = 0;
         this.renderMessage(wall, this.currentMessageIndex);
         
+        // 设置自动轮播
+        if (this.config.fanMessages.length > 1) {
+            const timer = setInterval(() => {
+                this.showNextMessage();
+            }, 8000); // 8秒切换一次
+            
+            this.timers.push(timer);
+        }
+        
         console.log('留言墙初始化完成');
     }
     
@@ -387,9 +480,9 @@ export default class HomeModule {
             </div>
             <p class="message-content">${message.text}</p>
             <div class="message-controls">
-                <button class="btn-prev-message">❮</button>
+                <button class="btn-prev-message" ${this.config.fanMessages.length <= 1 ? 'disabled' : ''}>❮</button>
                 <span class="message-counter">${index + 1}/${this.config.fanMessages.length}</span>
-                <button class="btn-next-message">❯</button>
+                <button class="btn-next-message" ${this.config.fanMessages.length <= 1 ? 'disabled' : ''}>❯</button>
             </div>
         `;
         
@@ -397,14 +490,14 @@ export default class HomeModule {
     }
     
     showPrevMessage() {
-        if (!this.config?.fanMessages?.length) return;
+        if (!this.config?.fanMessages?.length || this.config.fanMessages.length <= 1) return;
         
         this.currentMessageIndex = (this.currentMessageIndex - 1 + this.config.fanMessages.length) % this.config.fanMessages.length;
         this.renderMessage(document.querySelector('.message-item'), this.currentMessageIndex);
     }
     
     showNextMessage() {
-        if (!this.config?.fanMessages?.length) return;
+        if (!this.config?.fanMessages?.length || this.config.fanMessages.length <= 1) return;
         
         this.currentMessageIndex = (this.currentMessageIndex + 1) % this.config.fanMessages.length;
         this.renderMessage(document.querySelector('.message-item'), this.currentMessageIndex);
@@ -415,6 +508,9 @@ export default class HomeModule {
     initMessageBarrage() {
         const container = document.querySelector('.message-barrage-container');
         if (!container) return;
+        
+        // 清理可能存在的旧弹幕
+        container.innerHTML = '';
         
         const barrageTimer = setInterval(() => {
             this.createMessageBarrage(container);
@@ -455,15 +551,16 @@ export default class HomeModule {
             top: ${top}%;
             left: 100%;
             font-size: ${Math.random() * 4 + 12}px;
+            color: rgba(179, 157, 219, ${0.3 + Math.random() * 0.3});
         `;
         
         container.appendChild(barrage);
         
         // 简单动画
         const startTime = Date.now();
-        const duration = 10000; // 10秒
+        const duration = 8000 + Math.random() * 4000; // 8-12秒
         const startLeft = container.offsetWidth;
-        const endLeft = -barrage.offsetWidth;
+        const endLeft = -barrage.offsetWidth - 50;
         
         const animate = () => {
             const elapsed = Date.now() - startTime;
@@ -472,7 +569,8 @@ export default class HomeModule {
             if (progress < 1) {
                 const currentLeft = startLeft + progress * (endLeft - startLeft);
                 barrage.style.left = `${currentLeft}px`;
-                requestAnimationFrame(animate);
+                const animationId = requestAnimationFrame(animate);
+                this.barrageAnimations.push(animationId);
             } else {
                 if (barrage.parentNode) {
                     barrage.parentNode.removeChild(barrage);
@@ -480,7 +578,8 @@ export default class HomeModule {
             }
         };
         
-        requestAnimationFrame(animate);
+        const animationId = requestAnimationFrame(animate);
+        this.barrageAnimations.push(animationId);
     }
     
     // ==================== 事件绑定 ====================
@@ -518,15 +617,17 @@ export default class HomeModule {
             });
         }
         
-        // 留言翻页按钮
+        // 留言翻页按钮 - 使用事件委托
         const messageClickHandler = (e) => {
             const prevBtn = e.target.closest('.btn-prev-message');
             const nextBtn = e.target.closest('.btn-next-message');
             
-            if (prevBtn) {
+            if (prevBtn && !prevBtn.disabled) {
                 this.showPrevMessage();
-            } else if (nextBtn) {
+                e.preventDefault();
+            } else if (nextBtn && !nextBtn.disabled) {
                 this.showNextMessage();
+                e.preventDefault();
             }
         };
         
@@ -545,11 +646,29 @@ export default class HomeModule {
     
     handleResize() {
         // 重新初始化弹幕效果（如果窗口大小变化）
-        if (window.innerWidth >= 768) {
-            const container = document.querySelector('.message-barrage-container');
-            if (container) {
+        const container = document.querySelector('.message-barrage-container');
+        if (container) {
+            if (window.innerWidth >= 768) {
+                // 如果是桌面端且有弹幕容器
+                if (!this.timers.some(t => t._isBarrageTimer)) {
+                    // 标记弹幕定时器
+                    const barrageTimer = setInterval(() => {
+                        this.createMessageBarrage(container);
+                    }, 3000);
+                    barrageTimer._isBarrageTimer = true;
+                    this.timers.push(barrageTimer);
+                }
+            } else {
+                // 移动端清理弹幕
                 container.innerHTML = '';
-                this.initMessageBarrage();
+                // 清理弹幕定时器
+                this.timers = this.timers.filter(timer => {
+                    if (timer._isBarrageTimer) {
+                        clearInterval(timer);
+                        return false;
+                    }
+                    return true;
+                });
             }
         }
     }
